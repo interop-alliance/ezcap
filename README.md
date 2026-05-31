@@ -1,6 +1,7 @@
 # ezcap (_@interop/ezcap_)
 
 [![CI](https://github.com/interop-alliance/ezcap/workflows/CI/badge.svg)](https://github.com/interop-alliance/ezcap/actions?query=workflow%3ACI)
+[![NPM Version](https://img.shields.io/npm/v/@interop/ezcap.svg)](https://npm.im/@interop/ezcap)
 
 > An easy to use, opinionated Authorization Capabilities (zcap) client library
 > for the browser and Node.js.

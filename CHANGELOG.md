@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.0.0 -
+## 7.0.0 - 2026-05-31
 ### Changed
 - **BREAKING**: Renamed package to `@interop/ezcap` (Interop Alliance fork).
 - **BREAKING**: Switched all dependencies to the `@interop` forks:
