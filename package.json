@@ -1,7 +1,7 @@
 {
   "name": "@interop/ezcap",
   "description": "An easy-to-use, opinionated Authorization Capabilities (zcap) client for the browser and Node.js.",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "type": "module",
   "scripts": {
     "build": "pnpm run clear && tsc",
@@ -59,8 +59,7 @@
     "vitest": "^4.1.7"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "keywords": [
     "zcap",
