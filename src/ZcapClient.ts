@@ -45,7 +45,7 @@ export type HttpsAgent = object
  * that includes a `.sign()` function and `id` and `controller` properties.
  */
 export interface LinkedDataSignatureSuiteClass {
-  new (options: { date?: Date; signer: Signer }): object
+  new (options: { date?: Date; signer: Signer }): jsigs.LinkedDataProof
   /** Optional suite context document. */
   CONTEXT?: object
   /** Optional suite context URL. */
@@ -416,7 +416,7 @@ export class ZcapClient {
 
     const signedDelegatedCapability = await jsigs.sign(delegatedCapability, {
       documentLoader,
-      suite: suite as jsigs.LinkedDataProof,
+      suite,
       purpose
     })
 

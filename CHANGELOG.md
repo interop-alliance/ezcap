@@ -12,7 +12,7 @@
 - **BREAKING**: ESM-only; minimum Node.js is now 20.
 - Switched the toolchain to pnpm + `tsc` build + Vitest (node) + Playwright
   (browser) + ESLint flat config + Prettier.
-- Bumped `uuid` to 11 (self-typed, ESM-native).
+- Bumped `uuid` to 14 (self-typed, ESM-only, requires Node 20+).
 
 ## 6.1.0 - 2026-03-23
 ### Added
