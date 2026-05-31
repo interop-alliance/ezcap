@@ -1,5 +1,9 @@
 # @interop/ezcap Changelog
 
+## 7.0.4 - 2026-05-31
+### Fixed
+- Fix `jsigs` `LinkedDataProof` type import.
+
 ## 7.0.0-7.0.3 - 2026-05-31
 ### Changed
 - **BREAKING**: Renamed package to `@interop/ezcap` (Interop Alliance fork).
