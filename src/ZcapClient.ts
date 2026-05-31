@@ -10,7 +10,8 @@ import {
 } from '@interop/zcap'
 import { DEFAULT_HEADERS, httpClient } from '@interop/http-client'
 import type { HttpClientOptions, HttpResponse } from '@interop/http-client'
-import * as jsigs from '@interop/jsonld-signatures'
+import jsigs from '@interop/jsonld-signatures'
+import type { LinkedDataProof } from '@interop/jsonld-signatures'
 import { signCapabilityInvocation } from '@interop/http-signature-zcap-invoke'
 import { generateZcapUri, getCapabilitySigners } from './util.js'
 import type { DidDocument, KeyPair, Signer } from './util.js'
@@ -45,7 +46,7 @@ export type HttpsAgent = object
  * that includes a `.sign()` function and `id` and `controller` properties.
  */
 export interface LinkedDataSignatureSuiteClass {
-  new (options: { date?: Date; signer: Signer }): jsigs.LinkedDataProof
+  new (options: { date?: Date; signer: Signer }): LinkedDataProof
   /** Optional suite context document. */
   CONTEXT?: object
   /** Optional suite context URL. */
