@@ -1,0 +1,6 @@
+minimumReleaseAgeExclude:
+  - '@interop/did-io@3.0.0'
+  - '@interop/did-method-key@6.2.1'
+  - '@interop/ed25519-signature@6.0.1'
+  - '@interop/ed25519-verification-key@6.2.0'
+  - '@interop/zcap@9.0.3'

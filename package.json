@@ -1,89 +1,87 @@
 {
-  "name": "@digitalcredentials/ezcap",
-  "version": "6.1.0",
-  "description": "",
-  "homepage": "https://github.com/digitalcredentials/ezcap",
-  "author": {
-    "name": "Digital Bazaar, Inc.",
-    "email": "support@digitalbazaar.com",
-    "url": "https://digitalbazaar.com/"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/digitalcredentials/ezcap"
-  },
-  "bugs": {
-    "url": "https://github.com/digitalcredentials/ezcap/issues"
-  },
-  "license": "BSD-3-Clause",
+  "name": "@interop/ezcap",
+  "description": "An easy-to-use, opinionated Authorization Capabilities (zcap) client for the browser and Node.js.",
+  "version": "7.0.0",
   "type": "module",
+  "scripts": {
+    "build": "pnpm run clear && tsc",
+    "clear": "rimraf dist/*",
+    "dev": "vite",
+    "fix": "eslint --fix src test && pnpm run format",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint": "eslint src test",
+    "prepare": "pnpm run build",
+    "rebuild": "pnpm run clear && pnpm run build",
+    "test": "pnpm run lint && pnpm run test-node && pnpm run test-browser",
+    "test-browser": "playwright test",
+    "test-node": "vitest run",
+    "test-coverage": "vitest run --coverage"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "exports": {
     ".": {
-      "types": "./types/index.d.ts",
-      "default": "./lib/index.js"
+      "types": "./dist/index.d.ts",
+      "react-native": "./dist/index.js",
+      "import": "./dist/index.js"
     }
   },
-  "types": "./types/index.d.ts",
-  "files": [
-    "lib/**/*.js",
-    "types/**/*.d.ts"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
+  "module": "dist/index.js",
+  "browser": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
   "dependencies": {
-    "@digitalcredentials/http-client": "^5.0.4",
-    "@digitalbazaar/http-signature-zcap-invoke": "^6.1.0",
-    "@digitalbazaar/zcap": "^9.0.1",
-    "@digitalcredentials/jsonld-signatures": "^12.0.1",
-    "uuid": "^9.0.1"
+    "@interop/http-client": "^1.0.3",
+    "@interop/http-signature-zcap-invoke": "^6.1.2",
+    "@interop/jsonld-signatures": "^11.6.2",
+    "@interop/zcap": "^9.0.3",
+    "uuid": "^11.1.1"
   },
   "devDependencies": {
-    "@digitalbazaar/did-method-key": "^3.0.0",
-    "@digitalbazaar/ed25519-signature-2020": "^5.0.0",
-    "c8": "^8.0.1",
-    "chai": "^4.3.6",
-    "cross-env": "^7.0.3",
-    "eslint": "^8.17.0",
-    "eslint-config-digitalbazaar": "^5.0.1",
-    "eslint-plugin-jsdoc": "^46.9.1",
-    "eslint-plugin-unicorn": "^50.0.1",
-    "isomorphic-webcrypto": "^2.3.8",
-    "jsdoc": "^4.0.2",
-    "jsdoc-to-markdown": "^8.0.0",
-    "karma": "^6.3.20",
-    "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^3.1.1",
-    "karma-mocha": "^2.0.1",
-    "karma-mocha-reporter": "^2.2.5",
-    "karma-sourcemap-loader": "^0.4.0",
-    "karma-webpack": "^5.0.0",
-    "mocha": "^10.0.0",
-    "mocha-lcov-reporter": "^1.3.0",
-    "webpack": "^5.73.0"
+    "@eslint/js": "^10.0.1",
+    "@interop/did-method-key": "^6.2.1",
+    "@interop/ed25519-signature": "^6.0.1",
+    "@interop/ed25519-verification-key": "^6.2.0",
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.9.1",
+    "@vitest/coverage-v8": "^4.1.7",
+    "eslint": "^10.4.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.3",
+    "rimraf": "^6.1.3",
+    "typescript": "^5.5.0",
+    "typescript-eslint": "^8.59.4",
+    "vite": "^8.0.14",
+    "vitest": "^4.1.7"
   },
-  "c8": {
-    "reporter": [
-      "lcov",
-      "text-summary",
-      "text"
-    ]
-  },
-  "engines": {
-    "node": ">=18"
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   },
   "keywords": [
-    "Decentralized",
-    "Linked Data"
+    "zcap",
+    "authorization-capabilities",
+    "decentralized",
+    "linked-data",
+    "isomorphic"
   ],
-  "scripts": {
-    "test": "npm run test-node",
-    "test-node": "cross-env NODE_ENV=test mocha --preserve-symlinks -t 10000 -r tests/node.js tests/**/*.spec.js",
-    "test-karma": "karma start tests/karma.conf.cjs",
-    "coverage": "cross-env NODE_ENV=test c8 npm run test-node",
-    "coverage-ci": "cross-env NODE_ENV=test c8 --reporter=lcovonly --reporter=text-summary --reporter=text npm run test-node",
-    "coverage-report": "c8 report",
-    "generate-readme": "jsdoc2md -t readme-template.hbs lib/*.js > README.md",
-    "lint": "eslint ."
-  }
+  "packageManager": "pnpm@11.3.0",
+  "engines": {
+    "node": ">=20.0"
+  },
+  "author": {
+    "name": "Interop Alliance",
+    "url": "https://github.com/interop-alliance/"
+  },
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interop-alliance/ezcap.git"
+  },
+  "homepage": "https://github.com/interop-alliance/ezcap",
+  "bugs": "https://github.com/interop-alliance/ezcap/issues"
 }

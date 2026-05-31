@@ -1,4 +1,18 @@
-# @digitalcredentials/ezcap Changelog
+# @interop/ezcap Changelog
+
+## 7.0.0 -
+### Changed
+- **BREAKING**: Renamed package to `@interop/ezcap` (Interop Alliance fork).
+- **BREAKING**: Switched all dependencies to the `@interop` forks:
+  `@interop/http-client`, `@interop/http-signature-zcap-invoke`,
+  `@interop/zcap`, and `@interop/jsonld-signatures`.
+- **BREAKING**: Converted the source from JavaScript to TypeScript. The build
+  output now lives in `dist/` (was `lib/` + hand-written `types/`); `exports`,
+  `module`, `browser`, and `types` point there.
+- **BREAKING**: ESM-only; minimum Node.js is now 20.
+- Switched the toolchain to pnpm + `tsc` build + Vitest (node) + Playwright
+  (browser) + ESLint flat config + Prettier.
+- Bumped `uuid` to 11 (self-typed, ESM-native).
 
 ## 6.1.0 - 2026-03-23
 ### Added

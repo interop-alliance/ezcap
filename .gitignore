@@ -108,3 +108,13 @@ dist
 *.sw[nop]
 
 .vscode
+
+# Playwright
+playwright-report/
+test-results/
+
+# Vite
+.vite/
+
+# MacOS
+.DS_Store
