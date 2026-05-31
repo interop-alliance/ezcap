@@ -1,9 +1,13 @@
-# ezcap (_@digitalcredentials/ezcap_)
+# ezcap (_@interop/ezcap_)
 
-[![Node.js CI](https://github.com/digitalbazaar/ezcap/workflows/Node.js%20CI/badge.svg)](https://github.com/digitalbazaar/ezcap/actions?query=workflow%3A%22Node.js+CI%22)
+[![CI](https://github.com/interop-alliance/ezcap/workflows/CI/badge.svg)](https://github.com/interop-alliance/ezcap/actions?query=workflow%3ACI)
 
 > An easy to use, opinionated Authorization Capabilities (zcap) client library
 > for the browser and Node.js.
+
+This is an [Interop Alliance](https://github.com/interop-alliance) fork of the
+Digital Credentials / Digital Bazaar `ezcap`, switched to the `@interop`
+dependency forks and converted from JavaScript to TypeScript.
 
 ## Table of Contents
 
@@ -36,22 +40,21 @@ preferably via parties other than the implementer.
 
 ## Install
 
-- Browsers and Node.js 14+ are supported.
-- [Web Crypto API][] required. Older browsers and Node.js 14 must use a
-  polyfill.
+- Browsers and Node.js 20+ are supported.
+- This package is ESM-only (`"type": "module"`).
 
 To install from NPM:
 
 ```
-npm install @digitalcredentials/ezcap
+npm install @interop/ezcap
 ```
 
-To install locally (for development):
+To install locally (for development), using [pnpm](https://pnpm.io/):
 
 ```
-git clone https://github.com/digitalcredentials/ezcap.git
+git clone https://github.com/interop-alliance/ezcap.git
 cd ezcap
-npm install
+pnpm install
 ```
 
 ## Usage
@@ -72,18 +75,23 @@ using that key material to instantiate a client designed to operate on a
 specific base URL.
 
 ```js
-import {ZcapClient} from '@digitalcredentials/ezcap';
-import * as didKey from '@digitalcredentials/did-method-key';
-import {Ed25519Signature2020} from '@digitalcredentials/ed25519-signature-2020';
-const didKeyDriver = didKey.driver();
+import { ZcapClient } from '@interop/ezcap'
+import * as didKey from '@interop/did-method-key'
+import { Ed25519Signature2020 } from '@interop/ed25519-signature'
+import { Ed25519VerificationKey } from '@interop/ed25519-verification-key'
+
+const didKeyDriver = didKey.driver()
+didKeyDriver.use({ keyPairClass: Ed25519VerificationKey })
 
 // generate a DID Document and set of key pairs
-const {didDocument, keyPairs} = await didKeyDriver.generate();
+const { didDocument, keyPairs } = await didKeyDriver.generate()
 
 // create a new zcap client using the generated cryptographic material
 const zcapClient = new ZcapClient({
-  didDocument, keyPairs, SuiteClass: Ed25519Signature2020
-});
+  didDocument,
+  keyPairs,
+  SuiteClass: Ed25519Signature2020
+})
 ```
 
 ### Reading with a Root Capability
@@ -247,7 +255,7 @@ regarding the systems it interacts with:
 * The REST-ful systems center around reading and writing resources.
 
 If these assumptions do not apply to your system, the
-[zcap](https://github.com/digitalbazaar/zcap) library might
+[`@interop/zcap`](https://github.com/interop-alliance/zcap) library might
 be a better, albeit more complex, solution for you.
 
 Looking at each of these core assumptions more closely will help explain how designing systems to these constraints make it much easier to think about
@@ -286,191 +294,85 @@ very simple code.
 These are the two assumptions that ezcap makes and with those two assumptions,
 80% of all use cases we've encountered are covered.
 
-## Classes
+### `new ZcapClient(options)`
 
-<dl>
-<dt><a href="#ZcapClient">ZcapClient</a></dt>
-<dd></dd>
-</dl>
-
-## Functions
-
-<dl>
-<dt><a href="#getCapabilitySigners">getCapabilitySigners(options)</a> ⇒ <code>object</code></dt>
-<dd><p>Retrieves the first set of capability invocation and delegation signers
-associated with the <code>didDocument</code> from the <code>keyPairs</code>.</p>
-</dd>
-<dt><a href="#generateZcapUri">generateZcapUri(options)</a> ⇒ <code>string</code></dt>
-<dd><p>Generate a zcap URI given a root capability URL or a delegated flag.</p>
-</dd>
-</dl>
-
-## Typedefs
-
-<dl>
-<dt><a href="#HttpsAgent">HttpsAgent</a> : <code>object</code></dt>
-<dd><p>An object that manages connection persistence and reuse for HTTPS requests.</p>
-</dd>
-<dt><a href="#LinkedDataSignatureSuiteClass">LinkedDataSignatureSuiteClass</a> : <code>object</code></dt>
-<dd><p>An class that can be instantiated to create a suite capable of generating a
-Linked Data Signature. Its constructor must receive a <code>signer</code> instance
-that includes <code>.sign()</code> function and <code>id</code> and <code>controller</code> properties.</p>
-</dd>
-</dl>
-
-<a name="ZcapClient"></a>
-
-## ZcapClient
-**Kind**: global class  
-
-* [ZcapClient](#ZcapClient)
-    * [new ZcapClient(options)](#new_ZcapClient_new)
-    * [.delegate(options)](#ZcapClient+delegate) ⇒ <code>Promise.&lt;object&gt;</code>
-    * [.request(options)](#ZcapClient+request) ⇒ <code>Promise.&lt;object&gt;</code>
-    * [.read(options)](#ZcapClient+read) ⇒ <code>Promise.&lt;object&gt;</code>
-    * [.write(options)](#ZcapClient+write) ⇒ <code>Promise.&lt;object&gt;</code>
-
-<a name="new_ZcapClient_new"></a>
-
-### new ZcapClient(options)
-Creates a new ZcapClient instance that can be used to perform
-requests against HTTP URLs that are authorized via
-Authorization Capabilities (ZCAPs).
-
-**Returns**: [<code>ZcapClient</code>](#ZcapClient) - - The new ZcapClient instance.  
+Creates a new `ZcapClient` instance for performing requests against HTTP URLs
+authorized via Authorization Capabilities (zcaps). Provide a signing
+`SuiteClass`, plus **either** `{ didDocument, keyPairs }` (the invocation and
+delegation signers are derived via `getCapabilitySigners`) **or** explicit
+`{ invocationSigner, delegationSigner }`.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| options | <code>object</code> | The options to use. |
-| options.SuiteClass | [<code>LinkedDataSignatureSuiteClass</code>](#LinkedDataSignatureSuiteClass) | The LD   signature suite class to use to sign requests and delegations. |
-| [options.didDocument] | <code>object</code> | A DID Document that contains   `capabilityInvocation` and `capabilityDelegation` verification   relationships; `didDocument` and `keyPairs`, or `invocationSigner` and   `delegationSigner` must be provided in order to invoke or delegate   zcaps, respectively. |
-| [options.keyPairs] | <code>Map</code> | A map of key pairs associated with   `didDocument` indexed by key pair; `didDocument` and `keyPairs`, or   `invocationSigner` and `delegationSigner` must be provided in order to    invoke or delegate zcaps, respectively. |
-| [options.delegationSigner] | <code>object</code> | An object with a   `.sign()` function and `id` and `controller` properties that will be   used for delegating zcaps; `delegationSigner` or `didDocument` and   `keyPairs` must be provided to delegate zcaps. |
-| [options.invocationSigner] | <code>object</code> | An object with a   `.sign()` function and `id` and `controller` properties that will be   used for signing requests; `invocationSigner` or `didDocument` and   `keyPairs` must be provided to invoke zcaps. |
-| [options.agent] | [<code>HttpsAgent</code>](#HttpsAgent) | An optional HttpsAgent to use to   when performing HTTPS requests. |
-| [options.defaultHeaders] | <code>object</code> | The optional default HTTP   headers to include in every invocation request. |
-| [options.documentLoader] | <code>function</code> | Optional document loader   to load suite-related contexts. If none is provided, one will be   auto-generated if the suite class expresses its required context. |
+| `options.SuiteClass` | `LinkedDataSignatureSuiteClass` | The Linked Data Signature suite class used to sign requests and delegations (e.g. `Ed25519Signature2020`). Required. |
+| `options.didDocument` | `object` | A DID Document with `capabilityInvocation` and `capabilityDelegation` verification relationships. Use together with `keyPairs`. |
+| `options.keyPairs` | `Map` | A map of key pairs associated with `didDocument`, indexed by key id. |
+| `options.invocationSigner` | `object` | A signer (`.sign()`, `id`, `controller`) used for signing requests. Alternative to `didDocument` + `keyPairs`. |
+| `options.delegationSigner` | `object` | A signer (`.sign()`, `id`, `controller`) used for delegating zcaps. Alternative to `didDocument` + `keyPairs`. |
+| `options.agent` | `HttpsAgent` | Optional Node.js HTTPS agent for connection reuse. |
+| `options.defaultHeaders` | `object` | Optional default HTTP headers included on every invocation request. |
+| `options.documentLoader` | `function` | Optional document loader for suite-related contexts. If omitted, one is auto-generated from the suite class's static `CONTEXT` / `CONTEXT_URL`. |
 
-<a name="ZcapClient+delegate"></a>
+### `zcapClient.delegate(options) ⇒ Promise<ZcapObject>`
 
-### zcapClient.delegate(options) ⇒ <code>Promise.&lt;object&gt;</code>
-Delegates an Authorization Capability to a target delegate.
-
-**Kind**: instance method of [<code>ZcapClient</code>](#ZcapClient)  
-**Returns**: <code>Promise.&lt;object&gt;</code> - - A promise that resolves to a delegated
-  capability.  
+Delegates an Authorization Capability to a target controller. Returns the signed
+delegated zcap.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| options | <code>object</code> | The options to use. |
-| [options.capability] | <code>object</code> | The parent capability to   delegate; must be an object if it is a delegated zcap, can be a string   if it is a root zcap but then `invocationTarget` must be specified; if   not specified, this will be auto-generated as a root zcap for the given   `invocationTarget`. |
-| options.controller | <code>string</code> | The URL identifying the entity to   delegate to, i.e., the party that will control the new zcap. |
-| [options.invocationTarget] | <code>string</code> | Optional invocation target   to use when narrowing a `capability`'s existing invocationTarget.   Default is to use `capability.invocationTarget`, provided that   `capability` is an object. |
-| [options.expires] | <code>string</code> \| <code>Date</code> | Optional expiration value   for the delegation. Default is 5 minutes after `Date.now()`. |
-| [options.allowedActions] | <code>string</code> \| <code>Array</code> | Optional list of allowed   actions or string specifying allowed delegated action. Default: [] -   delegate all actions. |
+| `options.controller` | `string` | The URL/DID identifying the entity to delegate to (the party that will control the new zcap). Required. |
+| `options.capability` | `string \| object` | The parent capability to delegate. Must be an object if it is a delegated zcap; may be a string for a root zcap (then `invocationTarget` is required). If omitted, a root zcap is auto-generated for `invocationTarget`. |
+| `options.invocationTarget` | `string` | Optional invocation target used to narrow a `capability`'s existing target. Defaults to `capability.invocationTarget`. |
+| `options.expires` | `string \| Date` | Optional expiration. Default: 5 minutes after `Date.now()`. |
+| `options.allowedActions` | `string \| string[]` | Optional allowed action(s). Default: `[]` (delegate all actions). |
 
-<a name="ZcapClient+request"></a>
+### `zcapClient.request(options) ⇒ Promise<Response>`
 
-### zcapClient.request(options) ⇒ <code>Promise.&lt;object&gt;</code>
-Performs an HTTP request given an Authorization Capability (zcap) and/or
-a target URL. If no URL is given, the invocation target from the
-capability will be used. If a capability is given as a string, it MUST
-be a root capability. If both a capability and a URL are given, then
-the capability's invocation target MUST be a RESTful prefix of or
-equivalent to the URL.
-
-**Kind**: instance method of [<code>ZcapClient</code>](#ZcapClient)  
-**Returns**: <code>Promise.&lt;object&gt;</code> - - A promise that resolves to an HTTP response.  
+Performs an HTTP request authorized by a zcap and/or a target URL. If no URL is
+given, the capability's invocation target is used. A string `capability` MUST be
+a root capability. If both `url` and `capability` are given, the capability's
+invocation target MUST be a RESTful prefix of (or equal to) the URL.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| options | <code>object</code> | The options to use. |
-| [options.url] | <code>string</code> | The URL to invoke the   Authorization Capability against; if not provided, a `capability` must   be provided instead. |
-| [options.capability] | <code>string</code> \| <code>object</code> | The capability to invoke at   the given URL. Default: generate root capability from options.url. |
-| [options.method] | <code>string</code> | The HTTP method to use when accessing   the resource. Default: 'get'. |
-| [options.action] | <code>string</code> | The capability action that is being   invoked. Default: 'read'. |
-| [options.headers] | <code>object</code> | The additional headers to sign and   send along with the HTTP request. Default: {}. |
-| options.json | <code>object</code> | The JSON object, if any, to send with the   request. |
+| `options.url` | `string` | The URL to invoke against; required if no `capability` is provided. |
+| `options.capability` | `string \| object` | The capability to invoke. Default: a root capability generated from `options.url`. |
+| `options.method` | `string` | The HTTP method. Default: `'GET'`. |
+| `options.action` | `string` | The capability action being invoked. Default: same as `method`. |
+| `options.headers` | `object` | Additional headers to sign and send. Default: `{}`. |
+| `options.json` | `object` | The JSON body, if any, to send. |
+| `options.body` | `Blob \| Uint8Array` | A non-JSON body to send (file uploads, binary blobs, etc.). |
 
-<a name="ZcapClient+read"></a>
+### `zcapClient.read(options) ⇒ Promise<Response>`
 
-### zcapClient.read(options) ⇒ <code>Promise.&lt;object&gt;</code>
-Convenience function that invokes an Authorization Capability against a
-given URL to perform a read operation.
+Convenience wrapper for a `GET` / `read` invocation. Accepts `url`, `headers`,
+and `capability` (see `request`).
 
-**Kind**: instance method of [<code>ZcapClient</code>](#ZcapClient)  
-**Returns**: <code>Promise.&lt;object&gt;</code> - - A promise that resolves to an HTTP response.  
+### `zcapClient.write(options) ⇒ Promise<Response>`
 
-| Param | Type | Description |
-| --- | --- | --- |
-| options | <code>object</code> | The options to use. |
-| options.url | <code>string</code> | The URL to invoke the   Authorization Capability against. |
-| options.headers | <code>object</code> | The additional headers to sign and   send along with the HTTP request. |
-| [options.capability] | <code>string</code> | The capability to invoke at the   given URL. Default: generate root capability from options.url. |
+Convenience wrapper for a `POST` / `write` invocation. Accepts `url`, `json`,
+`body`, `headers`, and `capability` (see `request`).
 
-<a name="ZcapClient+write"></a>
+### `getCapabilitySigners(options) ⇒ CapabilitySigners`
 
-### zcapClient.write(options) ⇒ <code>Promise.&lt;object&gt;</code>
-Convenience function that invokes an Authorization Capability against a
-given URL to perform a write operation.
-
-**Kind**: instance method of [<code>ZcapClient</code>](#ZcapClient)  
-**Returns**: <code>Promise.&lt;object&gt;</code> - - A promise that resolves to an HTTP response.  
+Resolves the first set of capability invocation and delegation signers
+associated with a `didDocument` from its `keyPairs`. Returns
+`{ invocationSigner, delegationSigner }`.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| options | <code>object</code> | The options to use. |
-| options.url | <code>string</code> | The URL to invoke the   Authorization Capability against. |
-| options.json | <code>object</code> | The JSON object, if any, to send with the   request. |
-| [options.headers] | <code>object</code> | The additional headers to sign and   send along with the HTTP request. |
-| [options.capability] | <code>string</code> | The capability to invoke at the   given URL. Default: generate root capability from options.url. |
+| `options.didDocument` | `object` | A DID Document containing `capabilityInvocation` and `capabilityDelegation` verification relationships. |
+| `options.keyPairs` | `Map` | A map of key pairs indexed by key id. |
 
-<a name="getCapabilitySigners"></a>
+### TypeScript types
 
-## getCapabilitySigners(options) ⇒ <code>object</code>
-Retrieves the first set of capability invocation and delegation signers
-associated with the `didDocument` from the `keyPairs`.
-
-**Kind**: global function  
-**Returns**: <code>object</code> - - A valid `invocationSigner` and `delegationSigner`
-  associated with the didDocument.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| options | <code>object</code> | The options to use. |
-| options.didDocument | <code>string</code> | A DID Document containing   verification relationships for capability invocation and delegation. |
-| options.keyPairs | <code>string</code> | A map containing keypairs indexed by   key ID. |
-
-<a name="generateZcapUri"></a>
-
-## generateZcapUri(options) ⇒ <code>string</code>
-Generate a zcap URI given a root capability URL or a delegated flag.
-
-**Kind**: global function  
-**Returns**: <code>string</code> - - A zcap URI.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| options | <code>object</code> | The options to use. |
-| [options.url] | <code>string</code> | Optional URL identifying the root capability. |
-
-<a name="HttpsAgent"></a>
-
-## HttpsAgent : <code>object</code>
-An object that manages connection persistence and reuse for HTTPS requests.
-
-**Kind**: global typedef  
-**See**: https://nodejs.org/api/https.html#https_class_https_agent  
-<a name="LinkedDataSignatureSuiteClass"></a>
-
-## LinkedDataSignatureSuiteClass : <code>object</code>
-An class that can be instantiated to create a suite capable of generating a
-Linked Data Signature. Its constructor must receive a `signer` instance
-that includes `.sign()` function and `id` and `controller` properties.
-
-**Kind**: global typedef
+The package is written in TypeScript and ships generated declarations. In
+addition to the runtime exports, the following types are exported from
+`@interop/ezcap`: `ZcapObject`, `Proof`, `ZcapClientOptions`, `DelegateOptions`,
+`RequestOptions`, `ReadOptions`, `WriteOptions`, `HttpsAgent`,
+`LinkedDataSignatureSuiteClass`, `DocumentLoader`, `Signer`,
+`VerificationMethodReference`, `DidDocument`, `KeyPair`, and
+`CapabilitySigners`.
 
 ## License
-[New BSD License (3-clause)](LICENSE) © Digital Bazaar
-
-[Web Crypto API]: https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API
+[New BSD License (3-clause)](LICENSE) © Digital Bazaar and Interop Alliance
