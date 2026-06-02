@@ -1,5 +1,11 @@
 # @interop/ezcap Changelog
 
+## 7.1.0 - TBD
+### Changed
+- Source the zcap, DID, key pair, and signer types from
+  `@interop/data-integrity-core` instead of hand-written local interfaces.
+- Source the suite-class type from `@interop/data-integrity-proof`.
+
 ## 7.0.4 - 2026-05-31
 ### Fixed
 - Fix `jsigs` `LinkedDataProof` type import.

@@ -3,52 +3,28 @@
  * reserved.
  */
 import { constants } from '@interop/zcap'
+import type {
+  AbstractKeyPair,
+  IDidDocument,
+  ISigner,
+  IVerificationMethodEntry
+} from '@interop/data-integrity-core'
 import { v4 as uuid } from 'uuid'
 
 const { ZCAP_ROOT_PREFIX } = constants
 
 /**
- * A signer instance with a sign function and id and controller properties.
+ * A verification method entry in a DID Document, either as a string id or
+ * an embedded verification method object.
  */
-export interface Signer {
-  id: string
-  controller: string
-  sign(options: { data: Uint8Array }): Promise<Uint8Array>
-}
-
-/**
- * A verification method entry in a DID Document, either as a string ID or
- * an embedded object with an `id` property.
- */
-export type VerificationMethodReference =
-  | string
-  | { id: string; [key: string]: unknown }
-
-/**
- * A DID Document containing verification relationships for capability
- * invocation and delegation.
- */
-export interface DidDocument {
-  id: string
-  capabilityInvocation?: VerificationMethodReference[]
-  capabilityDelegation?: VerificationMethodReference[]
-  [key: string]: unknown
-}
-
-/**
- * A cryptographic key pair with a signer factory method.
- */
-export interface KeyPair {
-  signer(): Signer
-  [key: string]: unknown
-}
+export type IVerificationMethod = IVerificationMethodEntry
 
 /**
  * A pair of signers derived from a DID Document and key pairs.
  */
 export interface CapabilitySigners {
-  invocationSigner?: Signer
-  delegationSigner?: Signer
+  invocationSigner?: ISigner
+  delegationSigner?: ISigner
 }
 
 /**
@@ -56,9 +32,10 @@ export interface CapabilitySigners {
  * associated with the `didDocument` from the `keyPairs`.
  *
  * @param options {object} - The options to use.
- * @param options.didDocument {DidDocument} - A DID Document containing
+ * @param options.didDocument {IDidDocument} - A DID Document containing
  *   verification relationships for capability invocation and delegation.
- * @param options.keyPairs {Map} - A map containing keypairs indexed by key ID.
+ * @param options.keyPairs {Map} - A map of keypairs (each exposing a
+ *   `.signer()` factory) indexed by key ID.
  *
  * @returns {CapabilitySigners} - A valid `invocationSigner` and
  *   `delegationSigner` associated with the didDocument.
@@ -67,8 +44,8 @@ export function getCapabilitySigners({
   didDocument,
   keyPairs
 }: {
-  didDocument: DidDocument
-  keyPairs: Map<string, KeyPair>
+  didDocument: IDidDocument
+  keyPairs: Map<string, AbstractKeyPair>
 }): CapabilitySigners {
   const { capabilityDelegation, capabilityInvocation } = didDocument
 
@@ -81,10 +58,10 @@ export function getCapabilitySigners({
   }
 
   const capabilityDelegationId = _verificationMethodId(
-    capabilityDelegation?.[0]
+    _firstVerificationMethod(capabilityDelegation)
   )
   const capabilityInvocationId = _verificationMethodId(
-    capabilityInvocation?.[0]
+    _firstVerificationMethod(capabilityInvocation)
   )
 
   if (capabilityDelegation && !capabilityDelegationId) {
@@ -98,12 +75,12 @@ export function getCapabilitySigners({
     )
   }
 
-  let delegationKeyPair: KeyPair | undefined
+  let delegationKeyPair: AbstractKeyPair | undefined
   if (capabilityDelegationId) {
     delegationKeyPair = keyPairs.get(capabilityDelegationId)
   }
 
-  let invocationKeyPair: KeyPair | undefined
+  let invocationKeyPair: AbstractKeyPair | undefined
   if (capabilityInvocationId) {
     invocationKeyPair = keyPairs.get(capabilityInvocationId)
   }
@@ -116,18 +93,25 @@ export function getCapabilitySigners({
     )
   }
 
-  let delegationSigner: Signer | undefined
+  // `ISigner` from ssi has no `controller`, but downstream zcap verification
+  // expects the signer to carry one (used to match a delegation proof's
+  // verification method against the parent zcap's controller).
+  type ControllerSigner = ISigner & { controller: string }
+
+  let delegationSigner: ISigner | undefined
   if (delegationKeyPair && capabilityDelegationId) {
-    delegationSigner = delegationKeyPair.signer()
-    delegationSigner.id = capabilityDelegationId
-    delegationSigner.controller = didDocument.id
+    const signer = delegationKeyPair.signer() as ControllerSigner
+    signer.id = capabilityDelegationId
+    signer.controller = didDocument.id
+    delegationSigner = signer
   }
 
-  let invocationSigner: Signer | undefined
+  let invocationSigner: ISigner | undefined
   if (invocationKeyPair && capabilityInvocationId) {
-    invocationSigner = invocationKeyPair.signer()
-    invocationSigner.id = capabilityInvocationId
-    invocationSigner.controller = didDocument.id
+    const signer = invocationKeyPair.signer() as ControllerSigner
+    signer.id = capabilityInvocationId
+    signer.controller = didDocument.id
+    invocationSigner = signer
   }
 
   return { invocationSigner, delegationSigner }
@@ -151,15 +135,28 @@ export async function generateZcapUri({
 }
 
 /**
+ * Normalizes a verification relationship value (single entry or array) to
+ * its first entry.
+ */
+function _firstVerificationMethod(
+  value: IVerificationMethodEntry | IVerificationMethodEntry[] | undefined
+): IVerificationMethod | undefined {
+  if (value === undefined) {
+    return undefined
+  }
+  return Array.isArray(value) ? value[0] : value
+}
+
+/**
  * Resolves a verification method reference to its string id.
  *
- * @param verificationMethod {VerificationMethodReference} - A string id or an
- *   embedded verification method object.
+ * @param verificationMethod {IVerificationMethod} - A string id or an embedded
+ *   verification method object.
  *
  * @returns {string|undefined} - The verification method id, if any.
  */
 function _verificationMethodId(
-  verificationMethod: VerificationMethodReference | undefined
+  verificationMethod: IVerificationMethod | undefined
 ): string | undefined {
   if (verificationMethod === undefined) {
     return undefined

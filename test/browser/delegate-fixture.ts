@@ -9,7 +9,8 @@
 import * as didKey from '@interop/did-method-key'
 import { Ed25519Signature2020 } from '@interop/ed25519-signature'
 import { Ed25519VerificationKey } from '@interop/ed25519-verification-key'
-import { ZcapClient, type Proof } from '../../src/index.js'
+import type { ICapabilityDelegationProof } from '@interop/data-integrity-core/zcap'
+import { ZcapClient } from '../../src/index.js'
 
 /**
  * Generates a fresh `did:key`, constructs a ZcapClient, delegates a root zcap,
@@ -37,7 +38,7 @@ export async function delegateRootZcap() {
     controller
   })
 
-  const proof = delegatedZcap.proof as Proof
+  const proof = delegatedZcap.proof as ICapabilityDelegationProof
   return {
     parentCapability: delegatedZcap.parentCapability,
     controller: delegatedZcap.controller,

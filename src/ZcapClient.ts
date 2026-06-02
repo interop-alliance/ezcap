@@ -11,10 +11,19 @@ import {
 import { DEFAULT_HEADERS, httpClient } from '@interop/http-client'
 import type { HttpClientOptions, HttpResponse } from '@interop/http-client'
 import jsigs from '@interop/jsonld-signatures'
-import type { LinkedDataProof } from '@interop/jsonld-signatures'
+import type { SignatureSuiteClass } from '@interop/data-integrity-proof'
+import type {
+  AbstractKeyPair,
+  IDidDocument,
+  ISigner
+} from '@interop/data-integrity-core'
+import type {
+  ICapabilityDelegationProof,
+  IDelegatedZcap,
+  IZcap
+} from '@interop/data-integrity-core/zcap'
 import { signCapabilityInvocation } from '@interop/http-signature-zcap-invoke'
 import { generateZcapUri, getCapabilitySigners } from './util.js'
-import type { DidDocument, KeyPair, Signer } from './util.js'
 
 const { ZCAP_ROOT_PREFIX, ZCAP_CONTEXT_URL } = zCapConstants
 
@@ -40,72 +49,35 @@ export type DocumentLoader = (url: string) => Promise<RemoteDocument>
  */
 export type HttpsAgent = object
 
-/**
- * A class that can be instantiated to create a suite capable of generating a
- * Linked Data Signature. Its constructor must receive a `signer` instance
- * that includes a `.sign()` function and `id` and `controller` properties.
- */
-export interface LinkedDataSignatureSuiteClass {
-  new (options: { date?: Date; signer: Signer }): LinkedDataProof
-  /** Optional suite context document. */
-  CONTEXT?: object
-  /** Optional suite context URL. */
-  CONTEXT_URL?: string
-}
-
-/**
- * A proof attached to a capability.
- */
-export interface Proof {
-  proofPurpose?: string
-  created?: string
-  [key: string]: unknown
-}
-
-/**
- * A zcap (Authorization Capability) object.
- */
-export interface ZcapObject {
-  '@context': string | string[]
-  id: string
-  controller?: string
-  invocationTarget: string
-  parentCapability?: string
-  allowedAction?: string | string[]
-  expires?: string
-  proof?: Proof | Proof[]
-  [key: string]: unknown
-}
-
 export interface ZcapClientOptions {
   /** The LD signature suite class to use to sign requests and delegations. */
-  SuiteClass: LinkedDataSignatureSuiteClass
+  SuiteClass: SignatureSuiteClass
   /**
    * A DID Document that contains `capabilityInvocation` and
    * `capabilityDelegation` verification relationships; `didDocument` and
    * `keyPairs`, or `invocationSigner` and `delegationSigner` must be
    * provided in order to invoke or delegate zcaps, respectively.
    */
-  didDocument?: DidDocument
+  didDocument?: IDidDocument
   /**
    * A map of key pairs associated with `didDocument` indexed by key ID;
    * `didDocument` and `keyPairs`, or `invocationSigner` and
    * `delegationSigner` must be provided in order to invoke or delegate
-   * zcaps, respectively.
+   * zcaps, respectively. Each value must expose a `.signer()` factory.
    */
-  keyPairs?: Map<string, KeyPair>
+  keyPairs?: Map<string, AbstractKeyPair>
   /**
-   * A signer with `.sign()`, `id`, and `controller` used for delegating zcaps;
+   * A signer with `.sign()` and `id` used for delegating zcaps;
    * `delegationSigner` or `didDocument` and `keyPairs` must be provided to
    * delegate zcaps.
    */
-  delegationSigner?: Signer
+  delegationSigner?: ISigner
   /**
-   * A signer with `.sign()`, `id`, and `controller` used for signing requests;
+   * A signer with `.sign()` and `id` used for signing requests;
    * `invocationSigner` or `didDocument` and `keyPairs` must be provided to
    * invoke zcaps.
    */
-  invocationSigner?: Signer
+  invocationSigner?: ISigner
   /** An optional HttpsAgent to use when performing HTTPS requests. */
   agent?: HttpsAgent
   /** Optional default HTTP headers to include in every invocation request. */
@@ -125,7 +97,7 @@ export interface DelegateOptions {
    * must be specified; if not specified, this will be auto-generated as a
    * root zcap for the given `invocationTarget`.
    */
-  capability?: string | ZcapObject
+  capability?: string | IZcap
   /** The URL identifying the entity to delegate to. */
   controller: string
   /**
@@ -156,7 +128,7 @@ export interface RequestOptions {
    * The capability to invoke at the given URL. Default: generate root
    * capability from options.url.
    */
-  capability?: string | ZcapObject
+  capability?: string | IZcap
   /** The HTTP method to use when accessing the resource. Default: 'GET'. */
   method?: string
   /** The capability action that is being invoked. Default: same as method. */
@@ -178,7 +150,7 @@ export interface ReadOptions {
    * The capability to invoke at the given URL. Default: generate root
    * capability from options.url.
    */
-  capability?: string | ZcapObject
+  capability?: string | IZcap
 }
 
 export interface WriteOptions {
@@ -194,7 +166,7 @@ export interface WriteOptions {
    * The capability to invoke at the given URL. Default: generate root
    * capability from options.url.
    */
-  capability?: string | ZcapObject
+  capability?: string | IZcap
 }
 
 /**
@@ -205,9 +177,9 @@ export interface WriteOptions {
 export class ZcapClient {
   agent?: HttpsAgent
   defaultHeaders: Record<string, string>
-  SuiteClass: LinkedDataSignatureSuiteClass
-  invocationSigner?: Signer
-  delegationSigner?: Signer
+  SuiteClass: SignatureSuiteClass
+  invocationSigner?: ISigner
+  delegationSigner?: ISigner
   documentLoader: DocumentLoader
 
   /**
@@ -252,7 +224,7 @@ export class ZcapClient {
 
     // auto generate doc loader as needed if suite context is provided
     if (!documentLoader && SuiteClass.CONTEXT && SuiteClass.CONTEXT_URL) {
-      const suiteContext = SuiteClass.CONTEXT
+      const suiteContext = SuiteClass.CONTEXT as object
       const suiteContextUrl = SuiteClass.CONTEXT_URL
       documentLoader = extendDocumentLoader(async function suiteContextLoader(
         url: string
@@ -277,8 +249,8 @@ export class ZcapClient {
    *
    * @param options {DelegateOptions} - The options to use.
    *
-   * @returns {Promise<ZcapObject>} - A promise that resolves to a delegated
-   *   capability.
+   * @returns {Promise<IDelegatedZcap>} - A promise that resolves to a
+   *   delegated capability.
    */
   async delegate({
     capability,
@@ -286,7 +258,7 @@ export class ZcapClient {
     invocationTarget,
     expires,
     allowedActions
-  }: DelegateOptions): Promise<ZcapObject> {
+  }: DelegateOptions): Promise<IDelegatedZcap> {
     if (!(typeof controller === 'string' && controller.includes(':'))) {
       throw new Error(
         '"controller" must be a string expressing an absolute URI.'
@@ -367,7 +339,7 @@ export class ZcapClient {
     // default `allowedActions` to parent zcap's
     let allowedActionsValue: string | string[] | undefined = allowedActions
     if (allowedActionsValue === undefined) {
-      if (typeof capability === 'string') {
+      if (typeof capability === 'string' || !('allowedAction' in capability)) {
         allowedActionsValue = []
       } else {
         allowedActionsValue = capability.allowedAction ?? []
@@ -384,7 +356,7 @@ export class ZcapClient {
       )
     }
 
-    const delegatedCapability: ZcapObject = {
+    const delegatedCapability: Record<string, unknown> = {
       '@context': ZCAP_CONTEXT_URL,
       id: await generateZcapUri(),
       controller,
@@ -421,7 +393,7 @@ export class ZcapClient {
       purpose
     })
 
-    return signedDelegatedCapability as ZcapObject
+    return signedDelegatedCapability as IDelegatedZcap
   }
 
   /**
@@ -523,7 +495,10 @@ export class ZcapClient {
       json,
       body,
       invocationSigner,
-      capability: capability ?? (await generateZcapUri({ url })),
+      capability:
+        capability !== undefined
+          ? (capability as string | IZcap)
+          : await generateZcapUri({ url }),
       capabilityAction
     })
 
@@ -599,30 +574,13 @@ export class ZcapClient {
  * Validates that a capability object is a well-formed root or delegated zcap.
  *
  * @param options {object} - The options to use.
- * @param options.capability {ZcapObject} - The authorization capability.
+ * @param options.capability {IZcap} - The authorization capability.
  */
-function _checkZcap({ capability }: { capability: ZcapObject }): void {
-  const {
-    '@context': context,
-    id,
-    parentCapability,
-    invocationTarget,
-    allowedAction,
-    expires
-  } = capability
+function _checkZcap({ capability }: { capability: IZcap }): void {
+  const { '@context': context, id, invocationTarget } = capability
 
-  const isRoot = parentCapability === undefined
-  if (isRoot) {
-    if (context !== ZCAP_CONTEXT_URL) {
-      throw new Error(
-        'Root capability must have an "@context" value of ' +
-          `"${ZCAP_CONTEXT_URL}".`
-      )
-    }
-    if (capability.expires !== undefined) {
-      throw new Error('Root capability must not have an "expires" field.')
-    }
-  } else {
+  if ('parentCapability' in capability) {
+    const { parentCapability, allowedAction, expires } = capability
     if (!(Array.isArray(context) && context[0] === ZCAP_CONTEXT_URL)) {
       throw new Error(
         'Delegated capability must have an "@context" array ' +
@@ -649,6 +607,28 @@ function _checkZcap({ capability }: { capability: ZcapObject }): void {
     if (expires === undefined || isNaN(Date.parse(expires))) {
       throw new Error('Delegated capability must have a valid expires date.')
     }
+    if (
+      allowedAction !== undefined &&
+      !(
+        typeof allowedAction === 'string' ||
+        (Array.isArray(allowedAction) && allowedAction.length > 0)
+      )
+    ) {
+      throw new Error(
+        'If present on a capability, "allowedAction" must be a string or a ' +
+          'non-empty array.'
+      )
+    }
+  } else {
+    if (context !== ZCAP_CONTEXT_URL) {
+      throw new Error(
+        'Root capability must have an "@context" value of ' +
+          `"${ZCAP_CONTEXT_URL}".`
+      )
+    }
+    if ('expires' in capability && capability.expires !== undefined) {
+      throw new Error('Root capability must not have an "expires" field.')
+    }
   }
 
   if (!(typeof id === 'string' && id.includes(':'))) {
@@ -665,18 +645,6 @@ function _checkZcap({ capability }: { capability: ZcapObject }): void {
         'expresses an absolute URI.'
     )
   }
-  if (
-    allowedAction !== undefined &&
-    !(
-      typeof allowedAction === 'string' ||
-      (Array.isArray(allowedAction) && allowedAction.length > 0)
-    )
-  ) {
-    throw new Error(
-      'If present on a capability, "allowedAction" must be a string or a ' +
-        'non-empty array.'
-    )
-  }
 }
 
 /**
@@ -685,28 +653,23 @@ function _checkZcap({ capability }: { capability: ZcapObject }): void {
  * delegation proofs will cause this function to return an empty array.
  *
  * @param options {object} - The options to use.
- * @param options.capability {string|ZcapObject} - The authorization capability.
+ * @param options.capability {string|IZcap} - The authorization capability.
  *
- * @returns {Proof[]} Any `capabilityDelegation` proof objects attached to the
- *   given capability.
+ * @returns {ICapabilityDelegationProof[]} Any `capabilityDelegation` proof
+ *   objects attached to the given capability.
  */
 function _getDelegationProofs({
   capability
 }: {
-  capability: string | ZcapObject
-}): Proof[] {
+  capability: string | IZcap
+}): ICapabilityDelegationProof[] {
   // capability is root or capability has no `proof`, then it has no relevant
   // delegation proofs
-  if (
-    typeof capability === 'string' ||
-    !capability.parentCapability ||
-    !capability.proof
-  ) {
+  if (typeof capability === 'string' || !('parentCapability' in capability)) {
     return []
   }
-  let proof = capability.proof
-  if (!Array.isArray(proof)) {
-    proof = [proof]
-  }
+  const proof = Array.isArray(capability.proof)
+    ? capability.proof
+    : [capability.proof]
   return proof.filter(p => p && p.proofPurpose === 'capabilityDelegation')
 }

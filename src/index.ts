@@ -6,9 +6,6 @@ export { ZcapClient } from './ZcapClient.js'
 export type {
   DocumentLoader,
   HttpsAgent,
-  LinkedDataSignatureSuiteClass,
-  Proof,
-  ZcapObject,
   ZcapClientOptions,
   DelegateOptions,
   RequestOptions,
@@ -16,10 +13,4 @@ export type {
   WriteOptions
 } from './ZcapClient.js'
 export { getCapabilitySigners } from './util.js'
-export type {
-  Signer,
-  VerificationMethodReference,
-  DidDocument,
-  KeyPair,
-  CapabilitySigners
-} from './util.js'
+export type { CapabilitySigners, IVerificationMethod } from './util.js'
