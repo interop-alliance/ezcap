@@ -4,11 +4,10 @@
 import { test, expect } from '@playwright/test'
 
 test('ZcapClient delegates a root zcap in the browser', async ({ page }) => {
-  await page.goto('/test/index.html')
+  await page.goto('/test/browser/index.html')
 
   const result = await page.evaluate(async () => {
-    const { delegateRootZcap } =
-      await import('/test/browser/delegate-fixture.ts')
+    const { delegateRootZcap } = await import('./delegate-fixture.ts')
     return delegateRootZcap()
   })
 

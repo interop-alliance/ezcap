@@ -6,11 +6,8 @@ import { describe, it, expect } from 'vitest'
 import * as didKey from '@interop/did-method-key'
 import { Ed25519Signature2020 } from '@interop/ed25519-signature'
 import { Ed25519VerificationKey } from '@interop/ed25519-verification-key'
-import {
-  getCapabilitySigners,
-  ZcapClient,
-  type Proof
-} from '../../src/index.js'
+import type { ICapabilityDelegationProof } from '@interop/data-integrity-core/zcap'
+import { getCapabilitySigners, ZcapClient } from '../../src/index.js'
 
 const didKeyDriver = didKey.driver()
 didKeyDriver.use({ keyPairClass: Ed25519VerificationKey })
@@ -68,7 +65,7 @@ describe('ZcapClient', () => {
         'urn:zcap:root:' + encodeURIComponent(url)
       )
       expect(delegatedZcap.controller).toBe(controller)
-      const proof = delegatedZcap.proof as Proof
+      const proof = delegatedZcap.proof as ICapabilityDelegationProof
       expect(proof.proofPurpose).toBe('capabilityDelegation')
       expect(proof.capabilityChain).toHaveLength(1)
     })
@@ -133,7 +130,7 @@ describe('ZcapClient', () => {
           'urn:zcap:root:' + encodeURIComponent(url)
         )
         expect(delegatedZcap.controller).toBe(controller)
-        const proof = delegatedZcap.proof as Proof
+        const proof = delegatedZcap.proof as ICapabilityDelegationProof
         expect(proof.proofPurpose).toBe('capabilityDelegation')
         expect(proof.capabilityChain).toHaveLength(1)
 
@@ -153,7 +150,7 @@ describe('ZcapClient', () => {
 
         expect(delegatedZcap.parentCapability).toBe(delegationDepth1.id)
         expect(delegatedZcap.controller).toBe(controller)
-        const proof = delegatedZcap.proof as Proof
+        const proof = delegatedZcap.proof as ICapabilityDelegationProof
         expect(proof.proofPurpose).toBe('capabilityDelegation')
         expect(proof.capabilityChain).toHaveLength(2)
 
@@ -171,7 +168,7 @@ describe('ZcapClient', () => {
 
         expect(delegatedZcap.parentCapability).toBe(delegationDepth2.id)
         expect(delegatedZcap.controller).toBe(controller)
-        const proof = delegatedZcap.proof as Proof
+        const proof = delegatedZcap.proof as ICapabilityDelegationProof
         expect(proof.proofPurpose).toBe('capabilityDelegation')
         expect(proof.capabilityChain).toHaveLength(3)
       }
