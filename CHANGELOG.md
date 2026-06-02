@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.1.0 - TBD
+## 7.1.0 - 2026-06-01
 ### Changed
 - Source the zcap, DID, key pair, and signer types from
   `@interop/data-integrity-core` instead of hand-written local interfaces.
