@@ -4,7 +4,6 @@
  */
 export { ZcapClient } from './ZcapClient.js'
 export type {
-  DocumentLoader,
   HttpsAgent,
   ZcapClientOptions,
   DelegateOptions,
