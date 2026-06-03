@@ -17,6 +17,7 @@ import type {
   IDidDocument,
   ISigner
 } from '@interop/data-integrity-core'
+import type { IDocumentLoader } from '@interop/data-integrity-core/loader'
 import type {
   ICapabilityDelegationProof,
   IDelegatedZcap,
@@ -26,21 +27,6 @@ import { signCapabilityInvocation } from '@interop/http-signature-zcap-invoke'
 import { generateZcapUri, getCapabilitySigners } from './util.js'
 
 const { ZCAP_ROOT_PREFIX, ZCAP_CONTEXT_URL } = zCapConstants
-
-/**
- * A loaded remote document returned by a JSON-LD document loader.
- */
-export interface RemoteDocument {
-  contextUrl?: string | null
-  documentUrl?: string
-  document: unknown
-  tag?: string
-}
-
-/**
- * A JSON-LD document loader: resolves a URL to a remote document.
- */
-export type DocumentLoader = (url: string) => Promise<RemoteDocument>
 
 /**
  * An object that manages connection persistence and reuse for HTTPS requests.
@@ -87,7 +73,7 @@ export interface ZcapClientOptions {
    * provided, one will be auto-generated if the suite class expresses its
    * required context.
    */
-  documentLoader?: DocumentLoader
+  documentLoader?: IDocumentLoader
 }
 
 export interface DelegateOptions {
@@ -180,7 +166,7 @@ export class ZcapClient {
   SuiteClass: SignatureSuiteClass
   invocationSigner?: ISigner
   delegationSigner?: ISigner
-  documentLoader: DocumentLoader
+  documentLoader: IDocumentLoader
 
   /**
    * Creates a new ZcapClient instance that can be used to perform requests
@@ -238,10 +224,9 @@ export class ZcapClient {
           }
         }
         return jsigs.strictDocumentLoader(url)
-      }) as DocumentLoader
+      })
     }
-    this.documentLoader =
-      documentLoader ?? (zcapDocumentLoader as DocumentLoader)
+    this.documentLoader = documentLoader ?? zcapDocumentLoader
   }
 
   /**

@@ -1,5 +1,18 @@
 # @interop/ezcap Changelog
 
+## 7.1.1 - TBD
+### Changed
+- Update to use latest `@interop/zcap@11.0.0` TypeScript dep.
+- Use the `IDocumentLoader` type from `@interop/data-integrity-core/loader`
+  directly for the `documentLoader` option/property, and drop the now-redundant
+  casts on the zcap `documentLoader` / `extendDocumentLoader` values.
+
+### Removed
+- **Breaking:** Drop the local `RemoteDocument` and `DocumentLoader` type
+  aliases (including the `DocumentLoader` re-export from the package root).
+  Consumers should import `IRemoteDocument` / `IDocumentLoader` from
+  `@interop/data-integrity-core/loader` instead.
+
 ## 7.1.0 - 2026-06-01
 ### Changed
 - Source the zcap, DID, key pair, and signer types from
