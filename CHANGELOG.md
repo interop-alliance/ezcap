@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.1.1 - TBD
+## 7.1.1 - 2026-06-02
 ### Changed
 - Update to use latest `@interop/zcap@11.0.0` TypeScript dep.
 - Use the `IDocumentLoader` type from `@interop/data-integrity-core/loader`
