@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2020-2026 Digital Bazaar, Inc. and Interop Alliance. All
+ * Copyright (c) 2020-2026 Digital Bazaar, Inc. All
  * rights reserved.
  */
 import { describe, it, expect } from 'vitest'

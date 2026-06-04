@@ -76,8 +76,9 @@
     "node": ">=20.0"
   },
   "author": {
-    "name": "Interop Alliance",
-    "url": "https://github.com/interop-alliance/"
+    "name": "Digital Bazaar, Inc.",
+    "email": "support@digitalbazaar.com",
+    "url": "https://digitalbazaar.com/"
   },
   "license": "BSD-3-Clause",
   "repository": {

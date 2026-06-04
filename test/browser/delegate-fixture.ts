@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2026 Interop Alliance. All rights reserved.
+ * Copyright (c) 2026 Digital Bazaar, Inc. All rights reserved.
  *
  * Browser fixture for the Playwright isomorphism smoke test. This module is
  * served and transformed by the Vite dev server (so its bare `@interop/*`
