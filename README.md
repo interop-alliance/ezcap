@@ -305,7 +305,7 @@ delegation signers are derived via `getCapabilitySigners`) **or** explicit
 
 | Param | Type | Description |
 | --- | --- | --- |
-| `options.SuiteClass` | `LinkedDataSignatureSuiteClass` | The Linked Data Signature suite class used to sign requests and delegations (e.g. `Ed25519Signature2020`). Required. |
+| `options.SuiteClass` | `LinkedDataSignatureSuiteClass` | The Linked Data Signature suite class used to sign delegations. Any `@interop/data-integrity-proof` suite class works, e.g. `Ed25519Signature2020` (produces an `Ed25519Signature2020` proof) or `EddsaJcs2022` (produces a `DataIntegrityProof` with `cryptosuite: 'eddsa-jcs-2022'`), both from `@interop/ed25519-signature`. Required. |
 | `options.didDocument` | `object` | A DID Document with `capabilityInvocation` and `capabilityDelegation` verification relationships. Use together with `keyPairs`. |
 | `options.keyPairs` | `Map` | A map of key pairs associated with `didDocument`, indexed by key id. |
 | `options.invocationSigner` | `object` | A signer (`.sign()`, `id`, `controller`) used for signing requests. Alternative to `didDocument` + `keyPairs`. |
