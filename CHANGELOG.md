@@ -1,5 +1,19 @@
 # @interop/ezcap Changelog
 
+## Unreleased - TBD
+### Added
+- Document and test signing delegations with the `eddsa-jcs-2022` cryptosuite
+  (Node and browser smoke tests): pass `SuiteClass: EddsaJcs2022` (from
+  `@interop/ed25519-signature`) to `ZcapClient` to produce delegated zcaps with
+  a `DataIntegrityProof` (`cryptosuite: 'eddsa-jcs-2022'`) instead of an
+  `Ed25519Signature2020` proof. No API change -- the `SuiteClass` option already
+  accepts any `@interop/data-integrity-proof` suite class.
+
+### Changed
+- Require `@interop/ed25519-signature@^7.1.0` (adds the `EddsaJcs2022` suite
+  class export) and `@interop/data-integrity-core@^6.2.0` (adds the optional
+  `cryptosuite` field to `ICapabilityDelegationProof`).
+
 ## 7.1.1 - 2026-06-02
 ### Changed
 - Update to use latest `@interop/zcap@11.0.0` TypeScript dep.

@@ -26,7 +26,8 @@
     ".": {
       "types": "./dist/index.d.ts",
       "react-native": "./dist/index.js",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
   "module": "dist/index.js",
@@ -34,7 +35,7 @@
   "types": "dist/index.d.ts",
   "sideEffects": false,
   "dependencies": {
-    "@interop/data-integrity-core": "^6.1.1",
+    "@interop/data-integrity-core": "^6.2.0",
     "@interop/data-integrity-proof": "^3.2.1",
     "@interop/http-client": "^1.0.3",
     "@interop/http-signature-zcap-invoke": "^6.2.0",
@@ -45,7 +46,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@interop/did-method-key": "^7.1.0",
-    "@interop/ed25519-signature": "^7.0.1",
+    "@interop/ed25519-signature": "^7.1.0",
     "@interop/ed25519-verification-key": "^7.0.1",
     "@playwright/test": "^1.60.0",
     "@types/node": "^25.9.1",

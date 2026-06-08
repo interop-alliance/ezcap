@@ -4,7 +4,7 @@
  */
 import { describe, it, expect } from 'vitest'
 import * as didKey from '@interop/did-method-key'
-import { Ed25519Signature2020 } from '@interop/ed25519-signature'
+import { Ed25519Signature2020, EddsaJcs2022 } from '@interop/ed25519-signature'
 import { Ed25519VerificationKey } from '@interop/ed25519-verification-key'
 import type { ICapabilityDelegationProof } from '@interop/data-integrity-core/zcap'
 import { getCapabilitySigners, ZcapClient } from '../../src/index.js'
@@ -172,6 +172,68 @@ describe('ZcapClient', () => {
         expect(proof.proofPurpose).toBe('capabilityDelegation')
         expect(proof.capabilityChain).toHaveLength(3)
       }
+    })
+  })
+
+  describe('delegate with eddsa-jcs-2022 suite', () => {
+    it('should delegate a root zcap (DataIntegrityProof)', async () => {
+      const { didDocument, keyPairs } = await didKeyDriver.generate()
+      const zcapClient = new ZcapClient({
+        SuiteClass: EddsaJcs2022,
+        didDocument,
+        keyPairs
+      })
+
+      const url = 'https://zcap.example/items'
+      const controller =
+        'did:key:z6MkogR2ZPr4ZGvLV2wZ7cWUamNMhpg3bkVeXARDBrKQVn2c'
+      const delegatedZcap = await zcapClient.delegate({
+        invocationTarget: url,
+        controller
+      })
+
+      expect(delegatedZcap.parentCapability).toBe(
+        'urn:zcap:root:' + encodeURIComponent(url)
+      )
+      expect(delegatedZcap.controller).toBe(controller)
+      const proof = delegatedZcap.proof as ICapabilityDelegationProof
+      expect(proof.type).toBe('DataIntegrityProof')
+      expect(proof.cryptosuite).toBe('eddsa-jcs-2022')
+      expect(proof.proofPurpose).toBe('capabilityDelegation')
+      expect(proof.capabilityChain).toHaveLength(1)
+    })
+
+    it('should delegate a deeper zcap chain', async () => {
+      const { didDocument, keyPairs } = await didKeyDriver.generate()
+      const zcapClient = new ZcapClient({
+        SuiteClass: EddsaJcs2022,
+        didDocument,
+        keyPairs
+      })
+
+      // delegate root zcap to self to allow deeper delegation
+      const url = 'https://zcap.example/items'
+      const delegationDepth1 = await zcapClient.delegate({
+        invocationTarget: url,
+        controller: didDocument.id
+      })
+      expect(delegationDepth1.parentCapability).toBe(
+        'urn:zcap:root:' + encodeURIComponent(url)
+      )
+
+      // delegate again, creating a deeper chain
+      const delegationDepth2 = await zcapClient.delegate({
+        capability: delegationDepth1,
+        controller:
+          'did:key:z6MkogR2ZPr4ZGvLV2wZ7cWUamNMhpg3bkVeXARDBrKQVn2c'
+      })
+
+      expect(delegationDepth2.parentCapability).toBe(delegationDepth1.id)
+      const proof = delegationDepth2.proof as ICapabilityDelegationProof
+      expect(proof.type).toBe('DataIntegrityProof')
+      expect(proof.cryptosuite).toBe('eddsa-jcs-2022')
+      expect(proof.proofPurpose).toBe('capabilityDelegation')
+      expect(proof.capabilityChain).toHaveLength(2)
     })
   })
 
