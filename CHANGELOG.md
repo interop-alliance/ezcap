@@ -8,6 +8,10 @@
   a `DataIntegrityProof` (`cryptosuite: 'eddsa-jcs-2022'`) instead of an
   `Ed25519Signature2020` proof. No API change -- the `SuiteClass` option already
   accepts any `@interop/data-integrity-proof` suite class.
+- Opt-in delegation micro-benchmark (`test/node/delegate.perf.test.ts`, run via
+  `pnpm run test-perf`) comparing the per-suite cost of `ZcapClient.delegate()`.
+  Gated on the `PERF` env var so it does not run in the normal `test-node` / CI
+  suite.
 
 ### Changed
 - Require `@interop/ed25519-signature@^7.1.0` (adds the `EddsaJcs2022` suite
