@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.2.0 - TBD
+## 7.2.0 - 2026-06-09
 ### Added
 - Document and test signing delegations with the `eddsa-jcs-2022` cryptosuite
   (Node and browser smoke tests): pass `SuiteClass: EddsaJcs2022` (from
