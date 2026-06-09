@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## Unreleased - TBD
+## 7.2.0 - TBD
 ### Added
 - Document and test signing delegations with the `eddsa-jcs-2022` cryptosuite
   (Node and browser smoke tests): pass `SuiteClass: EddsaJcs2022` (from
@@ -15,8 +15,12 @@
 
 ### Changed
 - Require `@interop/ed25519-signature@^7.1.0` (adds the `EddsaJcs2022` suite
-  class export) and `@interop/data-integrity-core@^6.2.0` (adds the optional
-  `cryptosuite` field to `ICapabilityDelegationProof`).
+  class export).
+- Update to `@interop/data-integrity-core@^7.0.0` and
+  `@interop/data-integrity-proof@^3.3.1`. The latter now resolves
+  `@interop/jsonld-signatures@^11.7.1` (core 7.0.0), so the `SuiteClass`'s
+  `createProof` return type aligns with `jsigs.sign`'s expected proof
+  `'@context'` type (`ILDContext`). No ezcap API change.
 
 ## 7.1.1 - 2026-06-02
 ### Changed
