@@ -1,5 +1,10 @@
 # @interop/ezcap Changelog
 
+## 7.2.1 - 2026-06-
+
+### Changed
+- Update to `@interop/data-integrity-core@8.0.0` and related.
+
 ## 7.2.0 - 2026-06-09
 ### Added
 - Document and test signing delegations with the `eddsa-jcs-2022` cryptosuite
