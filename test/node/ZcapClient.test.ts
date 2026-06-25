@@ -70,6 +70,37 @@ describe('ZcapClient', () => {
       expect(proof.capabilityChain).toHaveLength(1)
     })
 
+    it('should use the "now" option for the delegation date and default expires', async () => {
+      const { didDocument, keyPairs } = await didKeyDriver.generate()
+      const { invocationSigner, delegationSigner } = getCapabilitySigners({
+        didDocument,
+        keyPairs
+      })
+      const zcapClient = new ZcapClient({
+        SuiteClass: Ed25519Signature2020,
+        invocationSigner,
+        delegationSigner
+      })
+
+      const url = 'https://zcap.example/items'
+      const controller =
+        'did:key:z6MkogR2ZPr4ZGvLV2wZ7cWUamNMhpg3bkVeXARDBrKQVn2c'
+      // a fixed timestamp (on a whole second) so the result is deterministic
+      const now = 1700000000000
+      const delegatedZcap = await zcapClient.delegate({
+        invocationTarget: url,
+        controller,
+        now
+      })
+
+      // default expiration is exactly 5 minutes after `now`
+      expect(delegatedZcap.expires).toBe('2023-11-14T22:18:20Z')
+
+      // the delegation proof `created` date is derived from `now`
+      const proof = delegatedZcap.proof as ICapabilityDelegationProof
+      expect(Date.parse(proof.created as string)).toBe(now)
+    })
+
     it('should throw error if controller is not provided when delegating zcap', async () => {
       const { didDocument, keyPairs } = await didKeyDriver.generate()
       const { invocationSigner, delegationSigner } = getCapabilitySigners({
