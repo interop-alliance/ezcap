@@ -9,7 +9,6 @@ import type {
   ISigner,
   IVerificationMethodEntry
 } from '@interop/data-integrity-core'
-import { v4 as uuid } from 'uuid'
 
 const { ZCAP_ROOT_PREFIX } = constants
 
@@ -131,7 +130,7 @@ export async function generateZcapUri({
   if (url) {
     return `${ZCAP_ROOT_PREFIX}${encodeURIComponent(url)}`
   }
-  return `urn:uuid:${uuid()}`
+  return `urn:uuid:${crypto.randomUUID()}`
 }
 
 /**

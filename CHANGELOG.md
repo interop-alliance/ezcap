@@ -1,5 +1,22 @@
 # @interop/ezcap Changelog
 
+## 7.3.0 - TBD
+
+Matches upstream https://github.com/digitalbazaar/ezcap `@4.3.0`
+
+### Added
+- Add a `now` option to `ZcapClient.delegate()` (a timestamp in ms, defaulting
+  to `Date.now()`) so the delegation proof `created` date and the default
+  `expires` value can be made deterministic for testing.
+
+### Changed
+- Use the web-standard global `crypto.randomUUID()` to generate `urn:uuid:`
+  zcap ids instead of the `uuid` package.
+
+### Removed
+- Drop the `uuid` dependency (replaced by `crypto.randomUUID()`, available in
+  browsers and Node >= 20).
+
 ## 7.2.1 - 2026-06-13
 
 ### Changed

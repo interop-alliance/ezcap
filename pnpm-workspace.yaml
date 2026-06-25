@@ -1,8 +1,1 @@
 minimumReleaseAgeExclude:
-  - '@interop/data-integrity-proof@3.4.0'
-  - '@interop/did-io@4.0.5'
-  - '@interop/did-method-key@7.3.2'
-  - '@interop/ed25519-signature@7.1.2'
-  - '@interop/http-digest-header@3.0.0'
-  - '@interop/http-signature-zcap-invoke@6.2.3'
-  - '@interop/zcap@11.0.3'
