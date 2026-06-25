@@ -102,6 +102,8 @@ export interface DelegateOptions {
    * action. Default: [] - delegate all actions.
    */
   allowedActions?: string | string[]
+  /** Optional timestamp (ms) for the current time; useful for testing. */
+  now?: number
 }
 
 export interface RequestOptions {
@@ -242,7 +244,8 @@ export class ZcapClient {
     controller,
     invocationTarget,
     expires,
-    allowedActions
+    allowedActions,
+    now = Date.now()
   }: DelegateOptions): Promise<IDelegatedZcap> {
     if (!(typeof controller === 'string' && controller.includes(':'))) {
       throw new Error(
@@ -272,7 +275,7 @@ export class ZcapClient {
     if (expires === undefined) {
       // default expiration is 5 minutes in the future
       expiresValue =
-        new Date(Date.now() + 5 * 60 * 1000).toISOString().slice(0, -5) + 'Z'
+        new Date(now + 5 * 60 * 1000).toISOString().slice(0, -5) + 'Z'
     } else if (expires instanceof Date) {
       if (isNaN(expires.getTime())) {
         throw new Error('"expires" is not a valid date.')
@@ -354,7 +357,7 @@ export class ZcapClient {
     }
 
     // ensure delegation date will not be at least after parent delegation date
-    let date = new Date()
+    let date = new Date(now)
     const [parentProof] = _getDelegationProofs({ capability })
     if (parentProof?.created) {
       const parentDelegationDate = new Date(parentProof.created)
