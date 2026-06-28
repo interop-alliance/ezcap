@@ -1,1 +1,7 @@
 minimumReleaseAgeExclude:
+  - '@interop/data-integrity-proof@3.4.1'
+  - '@interop/did-method-key@7.3.3'
+  - '@interop/http-client@1.0.4'
+  - '@interop/jsonld-signatures@11.8.2'
+  - '@interop/jsonld@9.0.3'
+  - '@interop/zcap@11.0.4'
