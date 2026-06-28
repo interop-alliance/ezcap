@@ -1,7 +1,7 @@
 {
   "name": "@interop/ezcap",
   "description": "An easy-to-use, opinionated Authorization Capabilities (zcap) client for the browser and Node.js.",
-  "version": "7.3.0",
+  "version": "7.3.1",
   "type": "module",
   "scripts": {
     "build": "pnpm run clear && tsc",
@@ -37,16 +37,16 @@
   "sideEffects": false,
   "dependencies": {
     "@interop/data-integrity-core": "^8.1.0",
-    "@interop/data-integrity-proof": "^3.4.0",
+    "@interop/data-integrity-proof": "^3.4.1",
     "@interop/ecdsa-signature": "^2.0.3",
-    "@interop/http-client": "^1.0.3",
+    "@interop/http-client": "^1.0.4",
     "@interop/http-signature-zcap-invoke": "^6.2.3",
-    "@interop/jsonld-signatures": "^11.8.1",
-    "@interop/zcap": "^11.0.3"
+    "@interop/jsonld-signatures": "^11.8.2",
+    "@interop/zcap": "^11.0.4"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@interop/did-method-key": "^7.3.2",
+    "@interop/did-method-key": "^7.3.3",
     "@interop/ed25519-signature": "^7.1.2",
     "@interop/ed25519-verification-key": "^8.0.2",
     "@playwright/test": "^1.60.0",

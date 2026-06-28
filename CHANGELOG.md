@@ -1,5 +1,10 @@
 # @interop/ezcap Changelog
 
+## 7.3.1 - 2026-06-28
+
+### Fixed
+- Update to latest http-client and related (fixes json content type detection).
+
 ## 7.3.0 - 2026-06-25
 
 Matches upstream https://github.com/digitalbazaar/ezcap `@4.3.0`
