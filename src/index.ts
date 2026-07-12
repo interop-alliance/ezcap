@@ -11,5 +11,5 @@ export type {
   ReadOptions,
   WriteOptions
 } from './ZcapClient.js'
-export { getCapabilitySigners } from './util.js'
+export { generateZcapUri, getCapabilitySigners } from './util.js'
 export type { CapabilitySigners, IVerificationMethod } from './util.js'

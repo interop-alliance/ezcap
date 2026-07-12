@@ -1,5 +1,12 @@
 # @interop/ezcap Changelog
 
+## 7.4.0 - TBD
+
+### Added
+- Export `generateZcapUri` (builds the `urn:zcap:root:<url-encoded target>`
+  root capability URI for a URL, or a random `urn:uuid:` zcap id without one)
+  so consumers do not have to hand-build root zcap ids.
+
 ## 7.3.1-7.3.2 - 2026-06-28
 
 ### Fixed
