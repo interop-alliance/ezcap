@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.4.0 - TBD
+## 7.4.0 - 2026-07-12
 
 ### Added
 - Export `generateZcapUri` (builds the `urn:zcap:root:<url-encoded target>`
