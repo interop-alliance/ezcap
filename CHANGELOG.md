@@ -1,5 +1,10 @@
 # @interop/ezcap Changelog
 
+## 7.4.2 - TBD
+
+### Changed
+- Update to latest `@interop/data-integrity-core@8.7.1`.
+
 ## 7.4.1 - 2026-07-17
 
 ### Changed

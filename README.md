@@ -375,5 +375,10 @@ addition to the runtime exports, the following types are exported from
 `VerificationMethodReference`, `DidDocument`, `KeyPair`, and
 `CapabilitySigners`.
 
+## Contribute
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for code style and contribution
+conventions.
+
 ## License
 [New BSD License (3-clause)](LICENSE) © Digital Bazaar and Interop Alliance
