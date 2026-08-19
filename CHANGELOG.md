@@ -1,5 +1,15 @@
 # @interop/ezcap Changelog
 
+## 7.4.3 - TBD
+
+### Fixed
+- `ZcapClient.request()` now accepts pairing a `url` with a capability whose
+  `invocationTarget` ends in `/` whenever the target is a boundary prefix of
+  the url, matching the server-side `@interop/zcap` `isValidTarget` semantics.
+  Previously such a target could prefix-match nothing under itself (the check
+  demanded a `//` in the url). Exact-match pairing and refusal of
+  cross-hierarchy urls are unchanged.
+
 ## 7.4.2 - 2026-08-18
 
 ### Changed

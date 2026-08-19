@@ -369,4 +369,102 @@ describe('ZcapClient', () => {
       expect(message).not.toContain('undefined')
     })
   })
+
+  describe('ZcapClient.request trailing-slash invocationTarget', () => {
+    /**
+     * Builds a client plus a zcap delegated to self whose `invocationTarget`
+     * ends in `/`, marking a subtree boundary.
+     *
+     * @returns {Promise<object>} The client and the delegated zcap.
+     */
+    async function createSubtreeClient() {
+      const { didDocument, keyPairs } = await didKeyDriver.generate()
+      const zcapClient = new ZcapClient({
+        SuiteClass: Ed25519Signature2020,
+        didDocument,
+        keyPairs
+      })
+      const delegatedZcap = await zcapClient.delegate({
+        invocationTarget: 'https://zcap.example/space/abc/',
+        controller: didDocument.id
+      })
+      return { zcapClient, delegatedZcap }
+    }
+
+    it('should accept a url inside the trailing-slash subtree', async () => {
+      const { zcapClient, delegatedZcap } = await createSubtreeClient()
+
+      // this makes a real network call that fails at the HTTP/DNS level --
+      // which is expected; what matters is that it got past the check.
+      let error: unknown
+      try {
+        await zcapClient.request({
+          url: 'https://zcap.example/space/abc/collection/doc',
+          capability: delegatedZcap,
+          method: 'get'
+        })
+      } catch (err) {
+        error = err
+      }
+
+      expect(error).toBeDefined()
+      expect((error as Error).message).not.toContain('RESTful prefix')
+    })
+
+    it('should accept a url exactly equal to the trailing-slash target', async () => {
+      const { zcapClient, delegatedZcap } = await createSubtreeClient()
+
+      let error: unknown
+      try {
+        await zcapClient.request({
+          url: 'https://zcap.example/space/abc/',
+          capability: delegatedZcap,
+          method: 'get'
+        })
+      } catch (err) {
+        error = err
+      }
+
+      expect(error).toBeDefined()
+      expect((error as Error).message).not.toContain('RESTful prefix')
+    })
+
+    it('should refuse a url in a sibling authority hierarchy', async () => {
+      const { zcapClient, delegatedZcap } = await createSubtreeClient()
+
+      await expect(
+        zcapClient.request({
+          url: 'https://zcap.example/space/abc-evil',
+          capability: delegatedZcap,
+          method: 'get'
+        })
+      ).rejects.toThrow(TypeError)
+      await expect(
+        zcapClient.request({
+          url: 'https://zcap.example/space/abc-evil',
+          capability: delegatedZcap,
+          method: 'get'
+        })
+      ).rejects.toThrow('"invocationTarget" must be a RESTful prefix')
+    })
+
+    it('should refuse the slashless parent url', async () => {
+      const { zcapClient, delegatedZcap } = await createSubtreeClient()
+
+      await expect(
+        zcapClient.request({
+          url: 'https://zcap.example/space/abc',
+          capability: delegatedZcap,
+          method: 'get'
+        })
+      ).rejects.toThrow(TypeError)
+      await expect(
+        zcapClient.request({
+          url: 'https://zcap.example/space/abc',
+          capability: delegatedZcap,
+          method: 'get'
+        })
+      ).rejects.toThrow('"invocationTarget" must be a RESTful prefix')
+    })
+  })
 })

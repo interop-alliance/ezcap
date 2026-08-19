@@ -454,10 +454,15 @@ export class ZcapClient {
       // if `url` and `capability` are both given, then `invocationTarget`
       // MUST be a RESTful prefix for `url` or equivalent to it to avoid
       // confused deputy (don't invoke zcaps against URLs that are in different
-      // authority heirarchies)
+      // authority heirarchies). A target that already ends in `/` is its own
+      // boundary prefix (a descendant url never contains `//`), matching the
+      // server-side `isValidTarget` semantics in `@interop/zcap`.
+      const restfulPrefix = invocationTarget.endsWith('/')
+        ? invocationTarget
+        : invocationTarget + '/'
       if (
         !(
-          url.startsWith(invocationTarget + '/') ||
+          url.startsWith(restfulPrefix) ||
           url.startsWith(invocationTarget + '?') ||
           url === invocationTarget
         )
