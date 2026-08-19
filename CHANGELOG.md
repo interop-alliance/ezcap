@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.4.3 - TBD
+## 7.4.3 - 2026-08-19
 
 ### Fixed
 - `ZcapClient.request()` now accepts pairing a `url` with a capability whose
