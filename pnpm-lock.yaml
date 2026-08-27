@@ -15,14 +15,14 @@ importers:
         specifier: ^3.4.5
         version: 3.4.5
       '@interop/ecdsa-signature':
-        specifier: ^2.0.5
-        version: 2.0.5(@interop/jsonld-signatures@11.8.5)
+        specifier: ^2.0.6
+        version: 2.0.6(@interop/jsonld-signatures@11.8.5)
       '@interop/http-client':
         specifier: ^1.0.5
         version: 1.0.5
       '@interop/http-signature-zcap-invoke':
-        specifier: ^6.2.4
-        version: 6.2.4
+        specifier: ^6.2.6
+        version: 6.2.6
       '@interop/jsonld-signatures':
         specifier: ^11.8.5
         version: 11.8.5
@@ -205,12 +205,12 @@ packages:
     resolution: {integrity: sha512-gJqAjJFW+PgNxwGpLVTisYENxNrZicyUGVhiHKIt02qcgSJZxS6XH/i9FtNoOLqD3uhc2cpwLzC+fdQTHZQPhA==}
     engines: {node: '>=24.0'}
 
-  '@interop/ecdsa-multikey@2.3.3':
-    resolution: {integrity: sha512-BfLx0xA8YlkZXhF9tYIa0rS/hq5yNmIioSH5GorkTLXbHq7gVkNSWxr4cEw8C7BHAW9j/xMv0gzoEbfoQ8eLig==}
+  '@interop/ecdsa-multikey@2.3.4':
+    resolution: {integrity: sha512-6Xsxqoe4aWEOWaFytS4AX2opNbrhd4bi4JMqNQkIIDs7dCLqqNGbX4UhG9jjoHS1p666dWaa4xO6GWMEQ9aJZQ==}
     engines: {node: '>=24.0'}
 
-  '@interop/ecdsa-signature@2.0.5':
-    resolution: {integrity: sha512-29oIgpGQcqfPHzhXjU5ZsGSI4Htc7r6XTmgM1ChZybGqq97nbspJVYZcDMdlr8Hs7WZLyZHJBVJW/wz1sPQtFg==}
+  '@interop/ecdsa-signature@2.0.6':
+    resolution: {integrity: sha512-WK29asbzNJFuUz2DFc1EDBdQxsQQowUjQSrPHANOy1FbjB8m9esQGIVqAgNNDKGC9ccNmnTluyFLt7UkUjHOmw==}
     engines: {node: '>=24.0'}
     peerDependencies:
       '@interop/jsonld-signatures': ^11.6.7
@@ -253,8 +253,8 @@ packages:
     resolution: {integrity: sha512-t/zL0+mQOjNkzj6usOv6MCOvG/HVOH1GG8Dbp03ympkf4NVOaJavBBJZuE05Xi1Sp4izmjHydDwnJLlzkZpzXQ==}
     engines: {node: '>=22.12'}
 
-  '@interop/http-digest-header@3.0.0':
-    resolution: {integrity: sha512-TImKkogQnjiQrqSQ/ZD8OZEGfB7sFy8qFl26mR5IAutzXi8n4vRkz7pUqGOjvpWRY5Xb9stHOqxV5kgKKjcG1g==}
+  '@interop/http-digest-header@3.1.0':
+    resolution: {integrity: sha512-rlcXBuKk9YHu2btFTIQOAOSi2FtBpL7SKQVkG4wzxpwMIa0wPIeA9hz4wj4QZrbbpqBPDGZRXXsLZ2ozEYTuaA==}
     engines: {node: '>=24.0'}
     peerDependencies:
       expo-crypto: '>=13'
@@ -262,12 +262,12 @@ packages:
       expo-crypto:
         optional: true
 
-  '@interop/http-signature-header@5.0.2':
-    resolution: {integrity: sha512-Sd+wNfMCvkxvNUoV+VoLfwn+IjTdtk0T1j/tQqxUiYUOkmS0V24O3ENiwCWfgUNkmmGIhlno9VIzLzd9mDwRkw==}
+  '@interop/http-signature-header@5.0.3':
+    resolution: {integrity: sha512-fe9waxlrnOOSxlpUeQUAHAf1bT0zTQkLF74m1i6/ok8OgMN8IkY07dsPHK6xPEQjSNASerq03spf60VHUVu9+Q==}
     engines: {node: '>=14'}
 
-  '@interop/http-signature-zcap-invoke@6.2.4':
-    resolution: {integrity: sha512-X95N3RhTg/+5L3daWZR69LbOtUtoPkH1XKtueqEc1/MhQ5sSMF0JDYQLd3xu905Ppmdw3mWr2Fn1txlhsBYMhw==}
+  '@interop/http-signature-zcap-invoke@6.2.6':
+    resolution: {integrity: sha512-GE4+yi+uvBN+6XDNASOavZfauZGUDF9GupmNtzZc2Lv/Wr2kdeqoIrw4Jkl/iVnuwkt37AccVqKI7K9EOER/tw==}
     engines: {node: '>=20'}
 
   '@interop/jsonld-signatures@11.8.3':
@@ -1336,14 +1336,14 @@ snapshots:
     transitivePeerDependencies:
       - react-native-get-random-values
 
-  '@interop/ecdsa-multikey@2.3.3':
+  '@interop/ecdsa-multikey@2.3.4':
     dependencies:
-      '@interop/data-integrity-core': 8.3.0
-      '@scure/base': 2.2.0
+      '@interop/data-integrity-core': 8.7.1
+      '@scure/base': 2.3.0
 
-  '@interop/ecdsa-signature@2.0.5(@interop/jsonld-signatures@11.8.5)':
+  '@interop/ecdsa-signature@2.0.6(@interop/jsonld-signatures@11.8.5)':
     dependencies:
-      '@interop/ecdsa-multikey': 2.3.3
+      '@interop/ecdsa-multikey': 2.3.4
       '@interop/jsonld': 9.0.3
       canonicalize: 3.0.0
       rdf-canonize: 5.0.0
@@ -1388,15 +1388,15 @@ snapshots:
       ky: 1.14.3
       undici: 7.28.0
 
-  '@interop/http-digest-header@3.0.0': {}
+  '@interop/http-digest-header@3.1.0': {}
 
-  '@interop/http-signature-header@5.0.2': {}
+  '@interop/http-signature-header@5.0.3': {}
 
-  '@interop/http-signature-zcap-invoke@6.2.4':
+  '@interop/http-signature-zcap-invoke@6.2.6':
     dependencies:
-      '@interop/data-integrity-core': 8.3.0
-      '@interop/http-digest-header': 3.0.0
-      '@interop/http-signature-header': 5.0.2
+      '@interop/data-integrity-core': 8.7.1
+      '@interop/http-digest-header': 3.1.0
+      '@interop/http-signature-header': 5.0.3
       pako: 2.2.0
     transitivePeerDependencies:
       - expo-crypto
