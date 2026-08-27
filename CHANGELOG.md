@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.4.4 - TBD
+## 7.4.4 - 2026-08-27
 
 ### Changed
 - Update to latest `@interop/http-signature-zcap-invoke` and ecdsa suite.
