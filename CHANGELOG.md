@@ -1,5 +1,10 @@
 # @interop/ezcap Changelog
 
+## 7.4.5 - TBD
+
+### Changed
+- Update to latest eddsa signature dep.
+
 ## 7.4.4 - 2026-08-27
 
 ### Changed

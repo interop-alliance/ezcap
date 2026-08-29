@@ -47,7 +47,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@interop/did-method-key": "^7.3.5",
-    "@interop/ed25519-signature": "^7.1.4",
+    "@interop/ed25519-signature": "^7.2.0",
     "@interop/ed25519-verification-key": "^8.0.4",
     "@playwright/test": "^1.60.0",
     "@types/node": "^25.9.1",
