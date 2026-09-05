@@ -38,7 +38,7 @@
   "dependencies": {
     "@interop/data-integrity-core": "^8.7.1",
     "@interop/data-integrity-proof": "^3.4.5",
-    "@interop/ecdsa-signature": "^2.0.6",
+    "@interop/ecdsa-signature": "^2.0.7",
     "@interop/http-client": "^1.0.5",
     "@interop/http-signature-zcap-invoke": "^6.2.6",
     "@interop/jsonld-signatures": "^11.8.5",
@@ -46,9 +46,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@interop/did-method-key": "^7.3.5",
-    "@interop/ed25519-signature": "^7.2.0",
-    "@interop/ed25519-verification-key": "^8.0.4",
+    "@interop/did-method-key": "^7.4.0",
+    "@interop/ed25519-signature": "^7.2.1",
+    "@interop/ed25519-verification-key": "^8.1.0",
     "@playwright/test": "^1.60.0",
     "@types/node": "^25.9.1",
     "@vitest/coverage-v8": "^4.1.8",

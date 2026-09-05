@@ -1,5 +1,10 @@
 # @interop/ezcap Changelog
 
+## 7.4.6 - TBD
+
+### Changed
+- Update to latest eddsa and ed25519 deps.
+
 ## 7.4.5 - 2026-08-29
 
 ### Changed
