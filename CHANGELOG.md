@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.4.8 - TBD
+## 7.4.8 - 2026-09-10
 
 ### Changed
 - Update to latest ed25519 key dep (`didKeySigner()`).
