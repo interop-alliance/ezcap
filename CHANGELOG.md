@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.4.7 - TBD
+## 7.4.7 - 2026-09-10
 
 ### Changed
 - Update to latest zcap and did-method-key deps.
