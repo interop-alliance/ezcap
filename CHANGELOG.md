@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.4.9 - TBD
+## 7.4.9 - 2026-09-16
 
 ### Changed
 - Update to latest `zcap` dep (add empty chain guard).
