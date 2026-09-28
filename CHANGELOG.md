@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.5.0 - TBD
+## 7.5.0 - 2026-09-27
 
 ### Changed
 - Update to latest `@interop/http-signature-zcap-invoke@6.3.0` (incremental blob digest).
