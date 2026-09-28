@@ -15,14 +15,14 @@ importers:
         specifier: ^3.4.6
         version: 3.4.6
       '@interop/ecdsa-signature':
-        specifier: ^2.0.7
-        version: 2.0.7(@interop/jsonld-signatures@11.8.6)
+        specifier: ^2.0.8
+        version: 2.0.8(@interop/jsonld-signatures@11.8.6)
       '@interop/http-client':
         specifier: ^1.0.5
         version: 1.0.5
       '@interop/http-signature-zcap-invoke':
-        specifier: ^6.2.6
-        version: 6.2.6
+        specifier: ^6.3.0
+        version: 6.3.0
       '@interop/jsonld-signatures':
         specifier: ^11.8.6
         version: 11.8.6
@@ -201,8 +201,8 @@ packages:
     resolution: {integrity: sha512-uR7L3MrPKZxMV5EEMsQxH3TCy0436Q+JgUaNIthe2e0VgsNo/YK7q+w9nSxjYEole4TcYonbbbROXwEKBJGePA==}
     engines: {node: '>=24.0'}
 
-  '@interop/ecdsa-signature@2.0.7':
-    resolution: {integrity: sha512-h0gIVjz/7OQ4BiqKl8SUiH7brz+mU7b4EMOC1Ypdcu341fttCasbjiZKY+6GUDaUGOVS6cdrq1csGrYQc0iRdg==}
+  '@interop/ecdsa-signature@2.0.8':
+    resolution: {integrity: sha512-y6RiyvnithIIYFNBLj6jmrj17pOYFvv0EvwRjXR6bnzcxdxqphNJyWq9xP9U2Fq9ksIMexT/syRvEi1wmW0x7A==}
     engines: {node: '>=24.0'}
     peerDependencies:
       '@interop/jsonld-signatures': ^11.6.7
@@ -236,8 +236,8 @@ packages:
     resolution: {integrity: sha512-t/zL0+mQOjNkzj6usOv6MCOvG/HVOH1GG8Dbp03ympkf4NVOaJavBBJZuE05Xi1Sp4izmjHydDwnJLlzkZpzXQ==}
     engines: {node: '>=22.12'}
 
-  '@interop/http-digest-header@3.1.0':
-    resolution: {integrity: sha512-rlcXBuKk9YHu2btFTIQOAOSi2FtBpL7SKQVkG4wzxpwMIa0wPIeA9hz4wj4QZrbbpqBPDGZRXXsLZ2ozEYTuaA==}
+  '@interop/http-digest-header@3.2.0':
+    resolution: {integrity: sha512-auYGT+IfztAkfwwKQh1wDJhaFwDKOTYkKn/GboBkxX6NGel5U+GD8AX7OwJPJV3skGYNsQLc7xoRn4Chlh3ocw==}
     engines: {node: '>=24.0'}
     peerDependencies:
       expo-crypto: '>=13'
@@ -249,8 +249,8 @@ packages:
     resolution: {integrity: sha512-fe9waxlrnOOSxlpUeQUAHAf1bT0zTQkLF74m1i6/ok8OgMN8IkY07dsPHK6xPEQjSNASerq03spf60VHUVu9+Q==}
     engines: {node: '>=14'}
 
-  '@interop/http-signature-zcap-invoke@6.2.6':
-    resolution: {integrity: sha512-GE4+yi+uvBN+6XDNASOavZfauZGUDF9GupmNtzZc2Lv/Wr2kdeqoIrw4Jkl/iVnuwkt37AccVqKI7K9EOER/tw==}
+  '@interop/http-signature-zcap-invoke@6.3.0':
+    resolution: {integrity: sha512-cIUdjyfz0EPXAk9b37XVwqDg1yGocTHEVZg/pfq5cm7ZhAmMQkcj1A1uea8x+Y1VHCJ0GmtTQYqf6Nx2gMplEg==}
     engines: {node: '>=20'}
 
   '@interop/jsonld-signatures@11.8.6':
@@ -1296,10 +1296,10 @@ snapshots:
 
   '@interop/ecdsa-multikey@2.4.0':
     dependencies:
-      '@interop/data-integrity-core': 8.7.1
+      '@interop/data-integrity-core': 8.8.0
       '@scure/base': 2.3.0
 
-  '@interop/ecdsa-signature@2.0.7(@interop/jsonld-signatures@11.8.6)':
+  '@interop/ecdsa-signature@2.0.8(@interop/jsonld-signatures@11.8.6)':
     dependencies:
       '@interop/ecdsa-multikey': 2.4.0
       '@interop/jsonld': 9.0.3
@@ -1339,14 +1339,16 @@ snapshots:
       ky: 1.14.3
       undici: 7.28.0
 
-  '@interop/http-digest-header@3.1.0': {}
+  '@interop/http-digest-header@3.2.0':
+    dependencies:
+      '@noble/hashes': 2.4.0
 
   '@interop/http-signature-header@5.0.3': {}
 
-  '@interop/http-signature-zcap-invoke@6.2.6':
+  '@interop/http-signature-zcap-invoke@6.3.0':
     dependencies:
-      '@interop/data-integrity-core': 8.7.1
-      '@interop/http-digest-header': 3.1.0
+      '@interop/data-integrity-core': 8.8.0
+      '@interop/http-digest-header': 3.2.0
       '@interop/http-signature-header': 5.0.3
       pako: 2.2.0
     transitivePeerDependencies:
