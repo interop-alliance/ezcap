@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.5.1 - TBD
+## 7.5.1 - 2026-10-06
 
 ### Changed
 - Update to latest `@interop/jsonld-signatures@11.8.7`.
