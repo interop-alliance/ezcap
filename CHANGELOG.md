@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.5.3 - TBD
+## 7.5.3 - 2026-10-12
 
 ### Changed
 - Update to latest ed25519-signature.
