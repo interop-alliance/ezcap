@@ -1,5 +1,10 @@
 # @interop/ezcap Changelog
 
+## 7.5.2 - TBD
+
+### Changed
+- Update to latest di core and jsigs.
+
 ## 7.5.1 - 2026-10-06
 
 ### Changed
