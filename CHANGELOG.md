@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.5.4 - TBD
+## 7.5.4 - 2026-10-24
 
 ### Changed
 - `request()` now uses `isValidTarget` from `@interop/zcap`, so query-bearing
