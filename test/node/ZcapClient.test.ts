@@ -255,8 +255,7 @@ describe('ZcapClient', () => {
       // delegate again, creating a deeper chain
       const delegationDepth2 = await zcapClient.delegate({
         capability: delegationDepth1,
-        controller:
-          'did:key:z6MkogR2ZPr4ZGvLV2wZ7cWUamNMhpg3bkVeXARDBrKQVn2c'
+        controller: 'did:key:z6MkogR2ZPr4ZGvLV2wZ7cWUamNMhpg3bkVeXARDBrKQVn2c'
       })
 
       expect(delegationDepth2.parentCapability).toBe(delegationDepth1.id)
@@ -391,6 +390,26 @@ describe('ZcapClient', () => {
       return { zcapClient, delegatedZcap }
     }
 
+    /**
+     * Builds a client plus a zcap delegated to self whose `invocationTarget`
+     * already carries a query, so only `&` attenuation is valid.
+     *
+     * @returns {Promise<object>} The client and the delegated zcap.
+     */
+    async function createQueryClient() {
+      const { didDocument, keyPairs } = await didKeyDriver.generate()
+      const zcapClient = new ZcapClient({
+        SuiteClass: Ed25519Signature2020,
+        didDocument,
+        keyPairs
+      })
+      const delegatedZcap = await zcapClient.delegate({
+        invocationTarget: 'https://zcap.example/space/abc/query?a=1',
+        controller: didDocument.id
+      })
+      return { zcapClient, delegatedZcap }
+    }
+
     it('should accept a url inside the trailing-slash subtree', async () => {
       const { zcapClient, delegatedZcap } = await createSubtreeClient()
 
@@ -442,6 +461,36 @@ describe('ZcapClient', () => {
       await expect(
         zcapClient.request({
           url: 'https://zcap.example/space/abc-evil',
+          capability: delegatedZcap,
+          method: 'get'
+        })
+      ).rejects.toThrow('"invocationTarget" must be a RESTful prefix')
+    })
+
+    it('should accept a new query variable on a query-bearing target', async () => {
+      const { zcapClient, delegatedZcap } = await createQueryClient()
+
+      let error: unknown
+      try {
+        await zcapClient.request({
+          url: 'https://zcap.example/space/abc/query?a=1&b=2',
+          capability: delegatedZcap,
+          method: 'get'
+        })
+      } catch (err) {
+        error = err
+      }
+
+      expect(error).toBeDefined()
+      expect((error as Error).message).not.toContain('RESTful prefix')
+    })
+
+    it('should refuse a path suffix on a query-bearing target', async () => {
+      const { zcapClient, delegatedZcap } = await createQueryClient()
+
+      await expect(
+        zcapClient.request({
+          url: 'https://zcap.example/space/abc/query?a=1/evil',
           capability: delegatedZcap,
           method: 'get'
         })

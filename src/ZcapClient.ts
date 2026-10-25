@@ -6,7 +6,8 @@ import {
   CapabilityDelegation,
   constants as zCapConstants,
   documentLoader as zcapDocumentLoader,
-  extendDocumentLoader
+  extendDocumentLoader,
+  isValidTarget
 } from '@interop/zcap'
 import { DEFAULT_HEADERS, httpClient } from '@interop/http-client'
 import type { HttpClientOptions, HttpResponse } from '@interop/http-client'
@@ -454,18 +455,13 @@ export class ZcapClient {
       // if `url` and `capability` are both given, then `invocationTarget`
       // MUST be a RESTful prefix for `url` or equivalent to it to avoid
       // confused deputy (don't invoke zcaps against URLs that are in different
-      // authority heirarchies). A target that already ends in `/` is its own
-      // boundary prefix (a descendant url never contains `//`), matching the
-      // server-side `isValidTarget` semantics in `@interop/zcap`.
-      const restfulPrefix = invocationTarget.endsWith('/')
-        ? invocationTarget
-        : invocationTarget + '/'
+      // authority heirarchies). Same rule as the server-side verifier.
       if (
-        !(
-          url.startsWith(restfulPrefix) ||
-          url.startsWith(invocationTarget + '?') ||
-          url === invocationTarget
-        )
+        !isValidTarget({
+          invocationTarget: url,
+          baseInvocationTarget: invocationTarget,
+          allowTargetAttenuation: true
+        })
       ) {
         throw new TypeError(
           `When "url" and "capability" are both given, the capability's ` +
@@ -580,9 +576,9 @@ function _checkZcap({ capability }: { capability: IZcap }): void {
           `with "${ZCAP_CONTEXT_URL}" in its first position.`
       )
     }
-    if (
-      !(typeof parentCapability === 'string' && parentCapability.includes(':'))
-    ) {
+    if (!(
+      typeof parentCapability === 'string' && parentCapability.includes(':')
+    )) {
       throw new Error(
         'Delegated capability must have a "parentCapability" with a string ' +
           'value that expresses an absolute URI.'
@@ -630,9 +626,9 @@ function _checkZcap({ capability }: { capability: IZcap }): void {
         'absolute URI.'
     )
   }
-  if (
-    !(typeof invocationTarget === 'string' && invocationTarget.includes(':'))
-  ) {
+  if (!(
+    typeof invocationTarget === 'string' && invocationTarget.includes(':')
+  )) {
     throw new Error(
       'Capability must have an "invocationTarget" with a string value that ' +
         'expresses an absolute URI.'

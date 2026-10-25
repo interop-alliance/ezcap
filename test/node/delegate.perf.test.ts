@@ -65,7 +65,11 @@ async function time(task: () => Promise<unknown>): Promise<Timing> {
     await task()
   }
   const total = performance.now() - start
-  return { total, mean: total / ITERATIONS, opsPerSec: (ITERATIONS * 1000) / total }
+  return {
+    total,
+    mean: total / ITERATIONS,
+    opsPerSec: (ITERATIONS * 1000) / total
+  }
 }
 
 /**
@@ -96,7 +100,10 @@ function formatRow(name: string, timing: Timing): string {
   return `  ${name.padEnd(30)} ${mean} ms/op   ${ops} ops/sec`
 }
 
-function report(title: string, results: Array<{ name: string; timing: Timing }>) {
+function report(
+  title: string,
+  results: Array<{ name: string; timing: Timing }>
+) {
   console.log(`\n${title}  (n=${ITERATIONS})`)
   for (const { name, timing } of results) {
     console.log(formatRow(name, timing))
@@ -116,11 +123,10 @@ function report(title: string, results: Array<{ name: string; timing: Timing }>)
   }
 }
 
-describe.runIf(Boolean(process.env.PERF))('delegate() performance by suite', () => {
-  it(
-    'times root delegation per suite',
-    { timeout: 120_000 },
-    async () => {
+describe.runIf(Boolean(process.env.PERF))(
+  'delegate() performance by suite',
+  () => {
+    it('times root delegation per suite', { timeout: 120_000 }, async () => {
       const results: Array<{ name: string; timing: Timing }> = []
       for (const { name, SuiteClass } of SUITES) {
         const { zcapClient } = await setupClient(SuiteClass)
@@ -136,28 +142,28 @@ describe.runIf(Boolean(process.env.PERF))('delegate() performance by suite', () 
       for (const { timing } of results) {
         expect(timing.opsPerSec).toBeGreaterThan(0)
       }
-    }
-  )
+    })
 
-  it(
-    'times re-delegation of a depth-1 zcap per suite',
-    { timeout: 120_000 },
-    async () => {
-      const results: Array<{ name: string; timing: Timing }> = []
-      for (const { name, SuiteClass } of SUITES) {
-        const { zcapClient, parentZcap } = await setupClient(SuiteClass)
-        const timing = await time(() =>
-          zcapClient.delegate({
-            capability: parentZcap,
-            controller: DELEGATEE
-          })
-        )
-        results.push({ name, timing })
+    it(
+      'times re-delegation of a depth-1 zcap per suite',
+      { timeout: 120_000 },
+      async () => {
+        const results: Array<{ name: string; timing: Timing }> = []
+        for (const { name, SuiteClass } of SUITES) {
+          const { zcapClient, parentZcap } = await setupClient(SuiteClass)
+          const timing = await time(() =>
+            zcapClient.delegate({
+              capability: parentZcap,
+              controller: DELEGATEE
+            })
+          )
+          results.push({ name, timing })
+        }
+        report('re-delegation (parent zcap embedded, chain length 2)', results)
+        for (const { timing } of results) {
+          expect(timing.opsPerSec).toBeGreaterThan(0)
+        }
       }
-      report('re-delegation (parent zcap embedded, chain length 2)', results)
-      for (const { timing } of results) {
-        expect(timing.opsPerSec).toBeGreaterThan(0)
-      }
-    }
-  )
-})
+    )
+  }
+)

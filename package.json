@@ -38,11 +38,11 @@
   "dependencies": {
     "@interop/data-integrity-core": "^8.9.0",
     "@interop/data-integrity-proof": "^3.4.8",
-    "@interop/ecdsa-signature": "^2.0.8",
+    "@interop/ecdsa-signature": "^2.0.10",
     "@interop/http-client": "^1.0.5",
     "@interop/http-signature-zcap-invoke": "^6.3.0",
     "@interop/jsonld-signatures": "^11.9.0",
-    "@interop/zcap": "^11.3.5"
+    "@interop/zcap": "^11.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

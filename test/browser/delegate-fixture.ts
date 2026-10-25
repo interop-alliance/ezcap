@@ -7,10 +7,7 @@
  * a Playwright spec file, so the test runner ignores it.
  */
 import * as didKey from '@interop/did-method-key'
-import {
-  Ed25519Signature2020,
-  EddsaJcs2022
-} from '@interop/ed25519-signature'
+import { Ed25519Signature2020, EddsaJcs2022 } from '@interop/ed25519-signature'
 import { Ed25519VerificationKey } from '@interop/ed25519-verification-key'
 import type { ICapabilityDelegationProof } from '@interop/data-integrity-core/zcap'
 import { ZcapClient } from '../../src/index.js'
