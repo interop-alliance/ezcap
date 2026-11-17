@@ -326,6 +326,14 @@ delegated zcap.
 | `options.invocationTarget` | `string` | Optional invocation target used to narrow a `capability`'s existing target. Defaults to `capability.invocationTarget`. |
 | `options.expires` | `string \| Date` | Optional expiration. Default: 5 minutes after `Date.now()`. |
 | `options.allowedActions` | `string \| string[]` | Optional allowed action(s). Default: `[]` (delegate all actions). |
+| `options.caveats` | `object \| object[]` | Optional caveat(s) restricting the delegated zcap, each an object with a non-empty string `type`. Stored as the zcap's `caveat` list. Default: no caveats. |
+
+A verifier refuses a zcap that carries a caveat type it does not support, so
+only add a caveat the target server handles. The caveats of the parent zcap are
+not copied to the delegated one, since a verifier collects the caveats of every
+zcap in the chain. Use an absolute URI as a caveat `type`. With a suite that
+signs JSON-LD, such as `Ed25519Signature2020`, any other caveat property must be
+a term the zcap's `@context` defines. See the `@interop/zcap` README.
 
 ### `zcapClient.request(options) ⇒ Promise<Response>`
 

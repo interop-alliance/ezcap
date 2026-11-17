@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@interop/data-integrity-core':
-        specifier: ^8.9.0
-        version: 8.9.0
+        specifier: ^8.12.0
+        version: 8.12.0
       '@interop/data-integrity-proof':
         specifier: ^3.4.8
         version: 3.4.8
@@ -27,8 +27,8 @@ importers:
         specifier: ^11.9.0
         version: 11.9.0
       '@interop/zcap':
-        specifier: ^11.4.0
-        version: 11.4.0
+        specifier: ^12.0.0
+        version: 12.0.0
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
@@ -174,6 +174,10 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
+  '@interop/data-integrity-core@8.12.0':
+    resolution: {integrity: sha512-wQoFUjN1xkF6hmyWz5KDb4uNlUGkRNvM6c0UXGMTAxMMlTZeEbR7bszkbKU4UtJdpgkuMFYh7YdeXeOTMsluoQ==}
+    engines: {node: '>=24.0'}
+
   '@interop/data-integrity-core@8.9.0':
     resolution: {integrity: sha512-FGj+D6VLb3q+UxAA5PRB0caoj5/cdpDLRW7Hu5cMI7xnpsEABnEi5leOL/BonTtSM6T/OdE/cuTOcrba0TGPdQ==}
     engines: {node: '>=24.0'}
@@ -258,8 +262,8 @@ packages:
     resolution: {integrity: sha512-B9/nkteXhceT1Psy+0Lwg4R4JzW6TUYDe8AgPIc3nsQKOCdIQ4MjjUPy9/kQ7eTnzW+GR0FcTSKDy6/GQqlwdQ==}
     engines: {node: '>=24.0'}
 
-  '@interop/zcap@11.4.0':
-    resolution: {integrity: sha512-Hhv0hV2xAlY8BWO5IxADi6w3L9qOdcM37R6ATMoicH1K7JO5vDjd96BwZ4SIkx+JSt6EWJjbO5Aejk4SMzJq/w==}
+  '@interop/zcap@12.0.0':
+    resolution: {integrity: sha512-by5d+WfZI8iuqbI/keZlTz1w9wXtgMv/PXSqDx/Jr5AZujUmniaNSKj+BFktMTvEjyZHnvq7SGbCuA5D3Rud9A==}
     engines: {node: '>=24.0'}
 
   '@jridgewell/resolve-uri@3.1.2':
@@ -1255,6 +1259,10 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
+  '@interop/data-integrity-core@8.12.0':
+    dependencies:
+      '@scure/base': 2.4.0
+
   '@interop/data-integrity-core@8.9.0':
     dependencies:
       '@scure/base': 2.4.0
@@ -1361,10 +1369,10 @@ snapshots:
       '@noble/curves': 2.4.0
       '@scure/base': 2.4.0
 
-  '@interop/zcap@11.4.0':
+  '@interop/zcap@12.0.0':
     dependencies:
       '@digitalbazaar/zcap-context': 2.0.1
-      '@interop/data-integrity-core': 8.9.0
+      '@interop/data-integrity-core': 8.12.0
       '@interop/jsonld-signatures': 11.9.0
 
   '@jridgewell/resolve-uri@3.1.2': {}

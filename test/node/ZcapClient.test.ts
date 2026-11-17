@@ -132,6 +132,83 @@ describe('ZcapClient', () => {
       )
     })
 
+    it('should delegate a zcap with caveats', async () => {
+      const { didDocument, keyPairs } = await didKeyDriver.generate()
+      const { invocationSigner, delegationSigner } = getCapabilitySigners({
+        didDocument,
+        keyPairs
+      })
+      const zcapClient = new ZcapClient({
+        SuiteClass: Ed25519Signature2020,
+        invocationSigner,
+        delegationSigner
+      })
+      const invocationTarget = 'https://zcap.example/items'
+      const controller =
+        'did:key:z6MkogR2ZPr4ZGvLV2wZ7cWUamNMhpg3bkVeXARDBrKQVn2c'
+      const caveat = { type: 'urn:example:caveat:OwnResourcesOnly' }
+
+      // a single caveat is stored as a list of one
+      const single = await zcapClient.delegate({
+        invocationTarget,
+        controller,
+        caveats: caveat
+      })
+      expect(single.caveat).toEqual([caveat])
+      expect(single.proof).toBeDefined()
+
+      const other = { type: 'urn:example:caveat:Other' }
+      const several = await zcapClient.delegate({
+        invocationTarget,
+        controller,
+        caveats: [caveat, other]
+      })
+      expect(several.caveat).toEqual([caveat, other])
+
+      // the caveats of the parent are not copied to the child
+      const child = await zcapClient.delegate({
+        capability: await zcapClient.delegate({
+          invocationTarget,
+          controller: didDocument.id,
+          caveats: caveat
+        }),
+        controller
+      })
+      expect(child.caveat).toBeUndefined()
+
+      const none = await zcapClient.delegate({
+        invocationTarget,
+        controller,
+        caveats: []
+      })
+      expect(none.caveat).toBeUndefined()
+    })
+
+    it('should fail to delegate with a malformed caveat', async () => {
+      const { didDocument, keyPairs } = await didKeyDriver.generate()
+      const { invocationSigner, delegationSigner } = getCapabilitySigners({
+        didDocument,
+        keyPairs
+      })
+      const zcapClient = new ZcapClient({
+        SuiteClass: Ed25519Signature2020,
+        invocationSigner,
+        delegationSigner
+      })
+      const invocationTarget = 'https://zcap.example/items'
+      const controller =
+        'did:key:z6MkogR2ZPr4ZGvLV2wZ7cWUamNMhpg3bkVeXARDBrKQVn2c'
+      for (const caveats of [{ type: '' }, [{}], 'OwnResourcesOnly', null]) {
+        await expect(
+          zcapClient.delegate({
+            invocationTarget,
+            controller,
+            caveats: caveats as never
+          })
+        ).rejects.toThrow('"caveats" must be')
+      }
+    })
+
     it('should delegate a deeper zcap chain', async () => {
       const { didDocument, keyPairs } = await didKeyDriver.generate()
       const { invocationSigner, delegationSigner } = getCapabilitySigners({
@@ -232,6 +309,27 @@ describe('ZcapClient', () => {
       expect(proof.cryptosuite).toBe('eddsa-jcs-2022')
       expect(proof.proofPurpose).toBe('capabilityDelegation')
       expect(proof.capabilityChain).toHaveLength(1)
+    })
+
+    it('should delegate a zcap with a caveat that has its own properties', async () => {
+      const { didDocument, keyPairs } = await didKeyDriver.generate()
+      const zcapClient = new ZcapClient({
+        SuiteClass: EddsaJcs2022,
+        didDocument,
+        keyPairs
+      })
+      const caveat = {
+        type: 'urn:example:caveat:MaxUses',
+        maxUses: 3
+      }
+      const delegatedZcap = await zcapClient.delegate({
+        invocationTarget: 'https://zcap.example/items',
+        controller: 'did:key:z6MkogR2ZPr4ZGvLV2wZ7cWUamNMhpg3bkVeXARDBrKQVn2c',
+        caveats: caveat
+      })
+      expect(delegatedZcap.caveat).toEqual([caveat])
+      const proof = delegatedZcap.proof as ICapabilityDelegationProof
+      expect(proof.cryptosuite).toBe('eddsa-jcs-2022')
     })
 
     it('should delegate a deeper zcap chain', async () => {

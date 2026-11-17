@@ -1,5 +1,14 @@
 # @interop/ezcap Changelog
 
+## 7.6.0 - TBD
+
+### Added
+- `caveats` option on `delegate()`, one caveat object or a list of them. They
+  are stored as the delegated zcap's `caveat` list.
+
+### Changed
+- Update to `@interop/zcap@12.0.0` and `@interop/data-integrity-core@8.12.0`.
+
 ## 7.5.4 - 2026-10-24
 
 ### Changed

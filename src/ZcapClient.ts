@@ -21,6 +21,7 @@ import type {
 import type { IDocumentLoader } from '@interop/data-integrity-core/loader'
 import type {
   ICapabilityDelegationProof,
+  ICaveat,
   IDelegatedZcap,
   IZcap
 } from '@interop/data-integrity-core/zcap'
@@ -103,6 +104,12 @@ export interface DelegateOptions {
    * action. Default: [] - delegate all actions.
    */
   allowedActions?: string | string[]
+  /**
+   * Optional caveat or list of caveats that restrict the delegated zcap. Each
+   * is an object with a non-empty string `type`. A verifier refuses a zcap
+   * that carries a caveat type it does not support. Default: no caveats.
+   */
+  caveats?: ICaveat | ICaveat[]
   /** Optional timestamp (ms) for the current time; useful for testing. */
   now?: number
 }
@@ -246,6 +253,7 @@ export class ZcapClient {
     invocationTarget,
     expires,
     allowedActions,
+    caveats,
     now = Date.now()
   }: DelegateOptions): Promise<IDelegatedZcap> {
     if (!(typeof controller === 'string' && controller.includes(':'))) {
@@ -345,6 +353,23 @@ export class ZcapClient {
       )
     }
 
+    // the caveats of the parent zcap are not copied; a verifier collects the
+    // caveats of every zcap in the chain
+    const caveatsValue = caveats === undefined ? [] : [caveats].flat()
+    for (const caveat of caveatsValue) {
+      if (!(
+        caveat &&
+        typeof caveat === 'object' &&
+        typeof caveat.type === 'string' &&
+        caveat.type.length > 0
+      )) {
+        throw new TypeError(
+          '"caveats" must be an object or an array of objects, each with a ' +
+            'non-empty string "type".'
+        )
+      }
+    }
+
     const delegatedCapability: Record<string, unknown> = {
       '@context': ZCAP_CONTEXT_URL,
       id: await generateZcapUri(),
@@ -355,6 +380,9 @@ export class ZcapClient {
     }
     if (allowedActionsValue.length > 0) {
       delegatedCapability.allowedAction = allowedActionsValue
+    }
+    if (caveatsValue.length > 0) {
+      delegatedCapability.caveat = caveatsValue
     }
 
     // ensure delegation date will not be at least after parent delegation date

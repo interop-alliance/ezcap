@@ -5,7 +5,7 @@
 `@interop/ezcap` is an easy-to-use, opinionated **Authorization Capabilities
 (zcap) HTTP client** for the browser and Node.js. It wraps the
 sign / delegate / invoke flow so that applications can talk to zcap-protected
-HTTP servers (e.g. Wallet Attached Storage) without hand-assembling HTTP
+HTTP servers (e.g. Portable Web Spaces, formerly Wallet Attached Storage) without hand-assembling HTTP
 Signature headers or capability proofs. It is published as an ESM-only package.
 
 This is an Interop Alliance fork of the Digital Bazaar / Digital Credentials
