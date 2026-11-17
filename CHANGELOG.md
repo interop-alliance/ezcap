@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.6.0 - TBD
+## 7.6.0 - 2026-11-17
 
 ### Added
 - `caveats` option on `delegate()`, one caveat object or a list of them. They
