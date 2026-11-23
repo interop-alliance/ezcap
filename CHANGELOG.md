@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.7.0 - TBD
+## 7.7.0 - 2026-11-22
 
 ### Changed
 - Update to `@interop/zcap@12.2.0`.
