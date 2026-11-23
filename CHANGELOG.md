@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.8.0 - TBD
+## 7.8.0 - 2026-11-23
 
 ### Added
 - `dereferenceTarget` option on `request()`, for a capability whose
