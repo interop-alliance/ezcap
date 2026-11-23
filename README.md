@@ -352,6 +352,43 @@ A URL beneath the target whose path has a `.` or `..` segment is refused.
 | `options.headers` | `object` | Additional headers to sign and send. Default: `{}`. |
 | `options.json` | `object` | The JSON body, if any, to send. |
 | `options.body` | `Blob \| Uint8Array` | A non-JSON body to send (file uploads, binary blobs, etc.). |
+| `options.dereferenceTarget` | `function` | Async `({ invocationTarget }) => string`. Maps a DID URL capability target to the https URL it dereferences to. Required for a DID URL target. See below. |
+
+#### DID URL invocation targets
+
+A capability may carry a DID URL as its `invocationTarget`, such as
+`did:webvh:<scid>:alice.example/space/abc/`. Its root capability id is
+`urn:zcap:root:<url-encoded DID URL>`. The HTTP request still goes to the https
+URL that the DID URL dereferences to. To invoke such a capability, pass both
+`url` and a `dereferenceTarget` hook.
+
+```js
+const response = await zcapClient.request({
+  url: 'https://alice.example/space/abc/photos/1',
+  capability, // its invocationTarget is a DID URL
+  dereferenceTarget: async ({ invocationTarget }) =>
+    mapDidUrlToHttps(invocationTarget)
+});
+```
+
+The hook is called once, with the capability's target. Its result must be an
+https URL with a host, no userinfo, and no query or fragment, since the
+dereference consumes the DID URL's selectors. For local development, an http URL
+is also accepted when its host is a loopback host (`localhost`, a `.localhost`
+subdomain, a `127.0.0.0/8` address, or `[::1]`). `url` must be equal to the
+result or beneath it, under the same rule as an https capability target. The
+request is signed for and sent to `url`. The capability is sent unchanged, in
+its DID URL form.
+
+The hook has the same name and shape as the `dereferenceTarget` hook of
+`@interop/zcap`'s `CapabilityInvocation`, so a client and a server can share one
+mapping. The two sides call it differently, though. The server calls the hook
+for every capability target, so a shared mapping must return an https target
+unchanged. The server also accepts any absolute URI as a result. The https or
+loopback restriction above applies only to this client.
+
+A request with a DID URL target and no `url`, or no hook, throws a `TypeError`.
+The hook is not called for a capability whose target is not a DID URL.
 
 ### `zcapClient.read(options) ⇒ Promise<Response>`
 

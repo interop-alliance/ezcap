@@ -42,11 +42,11 @@ class ThrowingBlob extends Blob {
     throw new Error('must not read body: arrayBuffer() called')
   }
 
-  bytes(): Promise<Uint8Array> {
+  bytes(): Promise<Uint8Array<ArrayBuffer>> {
     throw new Error('must not read body: bytes() called')
   }
 
-  stream(): ReadableStream<Uint8Array> {
+  stream(): ReadableStream<Uint8Array<ArrayBuffer>> {
     throw new Error('must not read body: stream() called')
   }
 
@@ -91,8 +91,8 @@ describe('ZcapClient.request caller-supplied digest', () => {
     expect(headers.digest).toBe(digest)
 
     // the signature must cover the caller-supplied `digest` header
-    const headersMatch = headers.authorization.match(/headers="([^"]+)"/)
+    const headersMatch = headers.authorization?.match(/headers="([^"]+)"/)
     expect(headersMatch).toBeTruthy()
-    expect(headersMatch?.[1].split(' ')).toContain('digest')
+    expect(headersMatch?.[1]?.split(' ')).toContain('digest')
   })
 })

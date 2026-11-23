@@ -1,5 +1,18 @@
 # @interop/ezcap Changelog
 
+## 7.8.0 - TBD
+
+### Added
+- `dereferenceTarget` option on `request()`, for a capability whose
+  `invocationTarget` is a DID URL. It maps the target to the https URL it
+  dereferences to, and `url` is checked against that result. Such a request
+  requires both `url` and the hook. An http result is accepted for a loopback
+  host (`localhost`, `*.localhost`, `127.0.0.0/8`, `[::1]`).
+- `request()` accepts a root capability id string with a DID URL target.
+
+### Changed
+- Update to `@interop/zcap@12.3.0`.
+
 ## 7.7.0 - 2026-11-22
 
 ### Changed

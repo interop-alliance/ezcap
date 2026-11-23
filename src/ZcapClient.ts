@@ -135,6 +135,14 @@ export interface RequestOptions {
   json?: object
   /** A non-JSON body to send with the request (file uploads, PDFs, etc.). */
   body?: Blob | Uint8Array
+  /**
+   * Maps a `did:` capability target to the https URL it dereferences to.
+   * Required when the capability's invocation target is a DID URL, and not
+   * called otherwise. The result must be an https URL (or an http URL on a
+   * loopback host such as `localhost`) with no query or fragment. `url` must
+   * then be equal to it or beneath it.
+   */
+  dereferenceTarget?: (options: { invocationTarget: string }) => Promise<string>
 }
 
 export interface ReadOptions {
@@ -419,7 +427,9 @@ export class ZcapClient {
    * capability will be used. If a capability is given as a string, it MUST
    * be a root capability. If both a capability and a URL are given, then
    * the capability's invocation target MUST be a RESTful prefix of or
-   * equivalent to the URL.
+   * equivalent to the URL. If the capability's invocation target is a DID URL,
+   * both a URL and a `dereferenceTarget` hook MUST be given, and the URL is
+   * checked against the https URL the hook returns.
    *
    * @param options {RequestOptions} - The options to use.
    *
@@ -433,7 +443,8 @@ export class ZcapClient {
     action,
     headers = {},
     json,
-    body
+    body,
+    dereferenceTarget
   }: RequestOptions): Promise<HttpResponse> {
     if (!this.invocationSigner) {
       throw new Error('"invocationSigner" was not provided in constructor.')
@@ -455,10 +466,14 @@ export class ZcapClient {
       invocationTarget = decodeURIComponent(
         capability.substring(ZCAP_ROOT_PREFIX.length)
       )
-      if (!invocationTarget.startsWith('https://')) {
+      if (
+        !invocationTarget.startsWith('did:') &&
+        !invocationTarget.startsWith('https://')
+      ) {
         throw new Error(
           'When "capability" is a string, it must be a root ' +
-            'authorization capability with an HTTPS invocation target.'
+            'authorization capability with an HTTPS or DID URL invocation ' +
+            'target.'
         )
       }
     } else if (capability !== undefined) {
@@ -473,13 +488,33 @@ export class ZcapClient {
       invocationTarget = capability.invocationTarget
     }
 
+    // a DID URL target is not a request URL; the request goes to `url`, which
+    // is checked against the https URL the DID URL dereferences to
+    let baseInvocationTarget = invocationTarget
+    if (invocationTarget?.startsWith('did:')) {
+      if (url === undefined) {
+        throw new TypeError(
+          `"url" is required when the capability's "invocationTarget" is a ` +
+            'DID URL.'
+        )
+      }
+      if (typeof dereferenceTarget !== 'function') {
+        throw new TypeError(
+          '"dereferenceTarget" is required when the capability\'s ' +
+            '"invocationTarget" is a DID URL.'
+        )
+      }
+      baseInvocationTarget = await dereferenceTarget({ invocationTarget })
+      _checkDereferencedTarget({ dereferencedTarget: baseInvocationTarget })
+    }
+
     // set `url` to invocation target if not given
     if (url === undefined) {
       if (invocationTarget === undefined) {
         throw new TypeError('If no "url" is given, "capability" must be given.')
       }
       url = invocationTarget
-    } else if (invocationTarget !== undefined) {
+    } else if (baseInvocationTarget !== undefined) {
       // if `url` and `capability` are both given, then `invocationTarget`
       // MUST be a RESTful prefix for `url` or equivalent to it to avoid
       // confused deputy (don't invoke zcaps against URLs that are in different
@@ -487,10 +522,17 @@ export class ZcapClient {
       if (
         !isValidTarget({
           invocationTarget: url,
-          baseInvocationTarget: invocationTarget,
+          baseInvocationTarget,
           allowTargetAttenuation: true
         })
       ) {
+        if (baseInvocationTarget !== invocationTarget) {
+          throw new TypeError(
+            `The capability's "invocationTarget" (${invocationTarget}), ` +
+              `dereferenced to (${baseInvocationTarget}), must be a RESTful ` +
+              'prefix of "url" or equal to "url".'
+          )
+        }
         throw new TypeError(
           `When "url" and "capability" are both given, the capability's ` +
             '"invocationTarget" must be a RESTful prefix of "url" or equal ' +
@@ -585,6 +627,80 @@ export class ZcapClient {
       body
     })
   }
+}
+
+/**
+ * Validates the result of a `dereferenceTarget` hook for a DID URL target. The
+ * result must be an https URL, or an http URL on a loopback host (for local
+ * development). The dereference consumes the DID URL's selectors, so the result
+ * carries no query or fragment.
+ *
+ * @param options {object} - The options to use.
+ * @param options.dereferencedTarget {unknown} - The hook's result.
+ */
+function _checkDereferencedTarget({
+  dereferencedTarget
+}: {
+  dereferencedTarget: unknown
+}): void {
+  if (
+    typeof dereferencedTarget !== 'string' ||
+    !_isSecureOrLoopbackUrl({ url: dereferencedTarget })
+  ) {
+    throw new TypeError(
+      `Dereferenced capability target (${String(dereferencedTarget)}) must ` +
+        'be an HTTPS URL, or an HTTP URL on a loopback host.'
+    )
+  }
+  if (/[?#]/.test(dereferencedTarget)) {
+    throw new TypeError(
+      `Dereferenced capability target (${dereferencedTarget}) must consume ` +
+        "the DID URL's selectors and have no query or fragment."
+    )
+  }
+}
+
+/**
+ * Checks that a URL is https, or is http on a loopback host (`localhost`, a
+ * `.localhost` subdomain, a `127.0.0.0/8` address, or `[::1]`). The URL must
+ * parse, have a host, and carry no userinfo.
+ *
+ * @param options {object} - The options to use.
+ * @param options.url {string} - The URL to check.
+ *
+ * @returns {boolean} `true` if the URL's scheme and host are acceptable.
+ */
+function _isSecureOrLoopbackUrl({ url }: { url: string }): boolean {
+  // the authority must be present in the string itself; the URL parser skips
+  // extra slashes and would read a host out of the path
+  if (!/^https?:\/\/[^/\\?#]/.test(url)) {
+    return false
+  }
+  const isHttps = url.startsWith('https://')
+  let parsedUrl: URL
+  try {
+    parsedUrl = new URL(url)
+  } catch {
+    return false
+  }
+  if (
+    parsedUrl.hostname === '' ||
+    parsedUrl.username !== '' ||
+    parsedUrl.password !== ''
+  ) {
+    return false
+  }
+  if (isHttps) {
+    return true
+  }
+  // a fully qualified name may end in a dot
+  const hostname = parsedUrl.hostname.replace(/\.$/, '')
+  return (
+    hostname === 'localhost' ||
+    hostname.endsWith('.localhost') ||
+    /^127(\.\d{1,3}){3}$/.test(hostname) ||
+    hostname === '[::1]'
+  )
 }
 
 /**

@@ -92,8 +92,10 @@ import { ZcapClient, getCapabilitySigners } from '@interop/ezcap'
   - `delegate({ capability, controller, invocationTarget, expires, allowedActions })`
     -- builds a delegated zcap object and signs it with `jsigs.sign` using the
     `CapabilityDelegation` proof purpose.
-  - `request({ url, capability, method, action, headers, json, body })` -- the
-    core invoke. `action` defaults to `method`. Signs the request and sends it.
+  - `request({ url, capability, method, action, headers, json, body, dereferenceTarget })`
+    -- the core invoke. `action` defaults to `method`. Signs the request and
+    sends it. A capability with a DID URL target needs `url` and the
+    `dereferenceTarget` hook; `url` is checked against the hook's https result.
   - `read(...)` -- convenience for `GET` / `read`.
   - `write(...)` -- convenience for `POST` / `write`.
 - **`getCapabilitySigners({ didDocument, keyPairs })`** -- resolves the
