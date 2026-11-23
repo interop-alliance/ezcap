@@ -323,7 +323,7 @@ delegated zcap.
 | --- | --- | --- |
 | `options.controller` | `string` | The URL/DID identifying the entity to delegate to (the party that will control the new zcap). Required. |
 | `options.capability` | `string \| object` | The parent capability to delegate. Must be an object if it is a delegated zcap; may be a string for a root zcap (then `invocationTarget` is required). If omitted, a root zcap is auto-generated for `invocationTarget`. |
-| `options.invocationTarget` | `string` | Optional invocation target used to narrow a `capability`'s existing target. Defaults to `capability.invocationTarget`. |
+| `options.invocationTarget` | `string` | Optional invocation target used to narrow a `capability`'s existing target. Defaults to `capability.invocationTarget`. When `capability` is a zcap object, a target that is not at or beneath its target is refused. |
 | `options.expires` | `string \| Date` | Optional expiration. Default: 5 minutes after `Date.now()`. |
 | `options.allowedActions` | `string \| string[]` | Optional allowed action(s). Default: `[]` (delegate all actions). |
 | `options.caveats` | `object \| object[]` | Optional caveat(s) restricting the delegated zcap, each an object with a non-empty string `type`. Stored as the zcap's `caveat` list. Default: no caveats. |
@@ -341,6 +341,7 @@ Performs an HTTP request authorized by a zcap and/or a target URL. If no URL is
 given, the capability's invocation target is used. A string `capability` MUST be
 a root capability. If both `url` and `capability` are given, the capability's
 invocation target MUST be a RESTful prefix of (or equal to) the URL.
+A URL beneath the target whose path has a `.` or `..` segment is refused.
 
 | Param | Type | Description |
 | --- | --- | --- |

@@ -595,6 +595,41 @@ describe('ZcapClient', () => {
       ).rejects.toThrow('"invocationTarget" must be a RESTful prefix')
     })
 
+    it('should refuse a url with a dot segment', async () => {
+      const { zcapClient, delegatedZcap } = await createSubtreeClient()
+
+      for (const url of [
+        'https://zcap.example/space/abc/../other',
+        'https://zcap.example/space/abc/./doc',
+        'https://zcap.example/space/abc/%2e%2e/other'
+      ]) {
+        await expect(
+          zcapClient.request({ url, capability: delegatedZcap, method: 'get' })
+        ).rejects.toThrow('"invocationTarget" must be a RESTful prefix')
+      }
+    })
+
+    it('should refuse to delegate a target outside the parent', async () => {
+      const { zcapClient, delegatedZcap } = await createSubtreeClient()
+      const { didDocument } = await didKeyDriver.generate()
+
+      for (const invocationTarget of [
+        'https://zcap.example/space/abc-evil/',
+        'https://zcap.example/space/abc/../other'
+      ]) {
+        await expect(
+          zcapClient.delegate({
+            capability: delegatedZcap,
+            invocationTarget,
+            controller: didDocument.id
+          })
+        ).rejects.toThrow(
+          'The "invocationTarget" in a delegated capability must not be ' +
+            'less restrictive than its parent.'
+        )
+      }
+    })
+
     it('should refuse the slashless parent url', async () => {
       const { zcapClient, delegatedZcap } = await createSubtreeClient()
 

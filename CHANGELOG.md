@@ -1,5 +1,14 @@
 # @interop/ezcap Changelog
 
+## 7.7.0 - TBD
+
+### Changed
+- Update to `@interop/zcap@12.2.0`.
+- `request()` refuses a `url` beneath the capability's target when its path has
+  a `.` or `..` segment (or the `%2e` form).
+- `delegate()` throws when `capability` is a zcap object and `invocationTarget`
+  is not at or beneath its target.
+
 ## 7.6.0 - 2026-11-17
 
 ### Added
