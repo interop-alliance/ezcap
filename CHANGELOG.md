@@ -1,6 +1,6 @@
 # @interop/ezcap Changelog
 
-## 7.9.0 - TBD
+## 7.9.0 - 2026-11-23
 
 ### Added
 - Export `checkDereferencedTarget({ dereferencedTarget })`, the check
