@@ -2,7 +2,7 @@
  * Copyright (c) 2020-2026 Digital Bazaar, Inc. All rights
  * reserved.
  */
-export { ZcapClient } from './ZcapClient.js'
+export { ZcapClient, checkDereferencedTarget } from './ZcapClient.js'
 export type {
   HttpsAgent,
   ZcapClientOptions,

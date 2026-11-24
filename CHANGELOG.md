@@ -1,5 +1,13 @@
 # @interop/ezcap Changelog
 
+## 7.9.0 - TBD
+
+### Added
+- Export `checkDereferencedTarget({ dereferencedTarget })`, the check
+  `request()` applies to the result of a `dereferenceTarget` hook. It throws a
+  `TypeError` for a result that is not an https URL (or an http URL on a
+  loopback host), or that carries a query or fragment.
+
 ## 7.8.0 - 2026-11-23
 
 ### Added

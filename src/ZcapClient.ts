@@ -505,7 +505,7 @@ export class ZcapClient {
         )
       }
       baseInvocationTarget = await dereferenceTarget({ invocationTarget })
-      _checkDereferencedTarget({ dereferencedTarget: baseInvocationTarget })
+      checkDereferencedTarget({ dereferencedTarget: baseInvocationTarget })
     }
 
     // set `url` to invocation target if not given
@@ -633,12 +633,16 @@ export class ZcapClient {
  * Validates the result of a `dereferenceTarget` hook for a DID URL target. The
  * result must be an https URL, or an http URL on a loopback host (for local
  * development). The dereference consumes the DID URL's selectors, so the result
- * carries no query or fragment.
+ * carries no query or fragment. `request()` applies this check to its hook's
+ * result. It is exported so the author of a hook can apply the same rule and
+ * report a refusal in its own terms.
  *
  * @param options {object} - The options to use.
  * @param options.dereferencedTarget {unknown} - The hook's result.
+ *
+ * @throws {TypeError} If the result is not an acceptable URL.
  */
-function _checkDereferencedTarget({
+export function checkDereferencedTarget({
   dereferencedTarget
 }: {
   dereferencedTarget: unknown

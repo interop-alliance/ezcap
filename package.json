@@ -42,7 +42,7 @@
     "@interop/http-client": "^1.0.6",
     "@interop/http-signature-zcap-invoke": "^6.3.0",
     "@interop/jsonld-signatures": "^11.9.0",
-    "@interop/zcap": "^12.3.0"
+    "@interop/zcap": "^12.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

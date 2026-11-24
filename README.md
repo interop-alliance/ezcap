@@ -387,6 +387,10 @@ for every capability target, so a shared mapping must return an https target
 unchanged. The server also accepts any absolute URI as a result. The https or
 loopback restriction above applies only to this client.
 
+`checkDereferencedTarget({ dereferencedTarget })` is exported. It is the check
+`request()` applies to the hook's result, and it throws a `TypeError` for a
+result the rules above refuse. A hook can call it to refuse a bad result itself.
+
 A request with a DID URL target and no `url`, or no hook, throws a `TypeError`.
 The hook is not called for a capability whose target is not a DID URL.
 

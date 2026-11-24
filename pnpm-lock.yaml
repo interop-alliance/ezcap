@@ -27,8 +27,8 @@ importers:
         specifier: ^11.9.0
         version: 11.9.0
       '@interop/zcap':
-        specifier: ^12.3.0
-        version: 12.3.0
+        specifier: ^12.3.1
+        version: 12.3.1
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
@@ -269,8 +269,8 @@ packages:
     resolution: {integrity: sha512-B9/nkteXhceT1Psy+0Lwg4R4JzW6TUYDe8AgPIc3nsQKOCdIQ4MjjUPy9/kQ7eTnzW+GR0FcTSKDy6/GQqlwdQ==}
     engines: {node: '>=24.0'}
 
-  '@interop/zcap@12.3.0':
-    resolution: {integrity: sha512-rVQ6T0++wJFwRi1AVrUgrGyYtOXuXpWwtUG+jnsKz/zf0pqwrvlugRZObRVcTqJJW+lB3slQk0o4y7iS7pTT9g==}
+  '@interop/zcap@12.3.1':
+    resolution: {integrity: sha512-B0EolsaYNg0fEhdTIJ+KUkVcYkUE0ljYZBg4Elgxyu/QGTlMysQ4wvPGHFbrLMrxnEK7YYQIJsLdwaAAZR41DA==}
     engines: {node: '>=24.0'}
 
   '@isaacs/nonrecursive-glob-match@1.1.0':
@@ -1413,7 +1413,7 @@ snapshots:
       '@noble/curves': 2.4.0
       '@scure/base': 2.4.0
 
-  '@interop/zcap@12.3.0':
+  '@interop/zcap@12.3.1':
     dependencies:
       '@digitalbazaar/zcap-context': 2.0.1
       '@interop/data-integrity-core': 8.12.0

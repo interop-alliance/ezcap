@@ -8,7 +8,7 @@ import * as didKey from '@interop/did-method-key'
 import { Ed25519Signature2020 } from '@interop/ed25519-signature'
 import { Ed25519VerificationKey } from '@interop/ed25519-verification-key'
 import type { HttpClientOptions } from '@interop/http-client'
-import { ZcapClient } from '../../src/index.js'
+import { ZcapClient, checkDereferencedTarget } from '../../src/index.js'
 
 let capturedUrl: string | undefined
 let capturedOptions: HttpClientOptions | undefined
@@ -345,5 +345,32 @@ describe('ZcapClient DID URL invocation targets', () => {
         )
       }
     })
+  })
+})
+
+describe('checkDereferencedTarget', () => {
+  it('should accept an https URL and an http URL on a loopback host', () => {
+    for (const dereferencedTarget of [
+      'https://pws.example/space/s1/',
+      'http://localhost:3000/space/s1/'
+    ]) {
+      expect(() =>
+        checkDereferencedTarget({ dereferencedTarget })
+      ).not.toThrow()
+    }
+  })
+
+  it('should refuse any other result with a TypeError', () => {
+    for (const dereferencedTarget of [
+      'http://pws.example/space/s1/',
+      'did:example:123/space/s1/',
+      'https://pws.example/space/s1/?versionId=1',
+      'https://pws.example/space/s1/#key-1',
+      undefined
+    ]) {
+      expect(() => checkDereferencedTarget({ dereferencedTarget })).toThrow(
+        TypeError
+      )
+    }
   })
 })
